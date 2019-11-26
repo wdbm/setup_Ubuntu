@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2019-11-16T2308Z"
+version="2019-11-26T1758Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -461,8 +461,17 @@ text="starting initial script interactions"
 #pp; note "${text}"
 echo_pause "${text}"
 ################################################################################
-
-echo_pause "Set the terminal to have a large history and set the terminal coloring as appropriate."
+# terminal style
+list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
+uuid_profile_default="$(gsettings get org.gnome.Terminal.ProfilesList default)"
+uuid_profile_default="${uuid_profile_default:1:-1}" # remove leading and trailing single quotes
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/scrollback-unlimited true
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/use-theme-colors false
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/foreground-color "#ffffff"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/background-color "#000000"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/use-transparent-background true
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/background-transparency-percent "10"
+# sound, display, power
 echo_pause "Set sound settings as required (allow loud volume etc.)"
 echo_pause "Set power settings as necessary."
 echo_pause "Set display settings as necessary. Turn off sticky edges."
