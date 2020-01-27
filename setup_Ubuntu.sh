@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2019-11-26T1758Z"
+version="2020-01-27T1647Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -675,6 +675,10 @@ pp; instate youtube-dlg
 pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate hollywood
+# Popcorn Time
+wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
+tar -xvf ~/Popcorn_Time.tar.gz --directory="${HOME}"
+rm Popcorn_Time.tar.gz
 # images
 pp; instate gimp
 pp; instate gimp-plugin-registry
@@ -718,6 +722,7 @@ pp; instate mediainfo
 pp; instate orpie
 pp; instate pdfmod
 pp; instate pdftk
+pp; sudo snap install pdftk
 pp; instate pdftotext
 pp; instate ranger
 pp; instate realpath
