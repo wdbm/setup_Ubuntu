@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-01-27T1647Z"
+version="2020-01-29T0150Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -63,20 +63,22 @@ This function ensures that appropriate configuration option variables exist.
 
 EOF
 
-#AirVPN=0                         # VPN service -- not implemented for now (see https://github.com/wdbm/resources_AirVPN)
+AirVPN=1                          # VPN service
 NordVPN=1                         # VPN service
 Nextcloud=1                       # synchronisation of files, contacts, calendars etc.
 Dropbox=0                         # recommendation: no
 LaTeX=1                           # set up LaTeX infrastructure
 LXDE=1                            # install LXDE desktop environment
+MATE=1                            # install MATE desktop environment
 PPELX=0                           # PPELX Wi-Fi setup, printing setup
-ROOT=1                            # install ROOT
+ROOT=0                            # install ROOT
 Sage=1                            # install Sage
 Mathics=1                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
-remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
+remove_default_home_directories=1 # remove Documents, Music, Pictures, Public, Templates, Videos
 configure_browsers=1              # configure browsers
 make_public_user_account=1        # make a public user account
+switch_libinput_to_synaptics=0    # switch libinput to Synaptics
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -230,8 +232,8 @@ for current_program in "${@}"; do
             sudo apt update
             sudo apt -y install bitcoin-qt
         elif [[ "$(text_in_lower_case "${current_program}")" == "calibre" ]]; then
-            sudo add-apt-repository -y ppa:n-muench/calibre
-            sudo apt update
+            #sudo add-apt-repository -y ppa:n-muench/calibre
+            #sudo apt update
             sudo apt -y install calibre
         elif [[ "$(text_in_lower_case "${current_program}")" == "cinnamon" ]]; then
             sudo add-apt-repository -y ppa:gwendal-lebihan-dev/cinnamon-stable
@@ -319,6 +321,7 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "mathics" ]]; then
             git clone https://github.com/poeschko/Mathics.git
             cd Mathics/
+            sudo pip3 install pint
             sudo python3 setup.py install
             sudo python3 setup.py initialize
             cd ../
@@ -329,8 +332,10 @@ for current_program in "${@}"; do
             sudo apt -y install nextcloud-client
         elif [[ "$(text_in_lower_case "${current_program}")" == "nordvpn" ]]; then
             wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
-            sudo apt -y install nordvpn-release_1.0.0_all.deb
+            sudo apt install nordvpn-release_1.0.0_all.deb
             rm nordvpn-release_1.0.0_all.deb
+            sudo apt update
+            sudo apt install nordvpn
         elif [[ "$(text_in_lower_case "${current_program}")" == "playonlinux" ]]; then
             wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
             sudo wget http://deb.playonlinux.com/playonlinux_precise.list -O /etc/apt/sources.list.d/playonlinux.list
@@ -481,6 +486,7 @@ IFS= read -d '' text << "EOF"
 Defaults        timestamp_timeout=60
 # Allow users of the group airvpn to run AirVPN as root.
 %airvpn ALL=(root) NOPASSWD:/usr/bin/airvpn
+%airvpn ALL=(root) NOPASSWD:/usr/bin/eddie-ui
 # Allow users of the group OpenVPN to run openvpn as root.
 %openvpn ALL=(root) NOPASSWD:/usr/sbin/openvpn
 # Allow users of the group veracrypt to run VeraCrypt as root.
@@ -549,6 +555,12 @@ instate ubuntu-restricted-extras
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
 pp; instate veracrypt
+# communications
+if [ ${AirVPN} -eq 1 ]; then
+wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
+sudo apt install eddie-ui
+fi
 
 ################################################################################
 text="initial script interactions complete"
@@ -556,8 +568,6 @@ pp; note "${text}"
 echo "${text}" | festival --tts &
 ################################################################################
 
-# root
-pp; instate gksu
 # security
 pp; instate fail2ban
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -576,7 +586,7 @@ fi
 # web
 pp; instate chromium-browser
 # grid
-pp; globus-gsi-cert-utils-progs
+pp; instate globus-gsi-cert-utils-progs
 # networking
 pp; instate openssh-server
 pp; instate vncviewer
@@ -675,6 +685,8 @@ pp; instate youtube-dlg
 pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate hollywood
+# music
+pp; instate hydrogen
 # Popcorn Time
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
 tar -xvf ~/Popcorn_Time.tar.gz --directory="${HOME}"
@@ -690,8 +702,16 @@ sudo pip3.6 install instaloader
 pp; note "install gallery download program gallery-dl"
 sudo pip3.6 install chardet
 sudo pip3.6 install gallery-dl
+# gcolor2
 pp; instate gcolor2
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcolor2/gcolor2_0.4-2.1ubuntu1_amd64.deb
+sudo apt-get install gcolor2_0.4-2.1ubuntu1_amd64.deb
+rm gcolor2_0.4-2.1ubuntu1_amd64.deb
+# Luminance HDR
+## Luminance HDR (16.04 LTS)
 pp; instate qtpfsgui
+## Luminance HDR (18.04 LTS)
+pp; instate luminance-hdr
 # sounds
 pp; note "remove Rhythmbox"
 sudo apt -y remove rhythmbox
@@ -716,7 +736,6 @@ pp; instate gnome-tweak-tool
 pp; instate gparted
 pp; instate graphviz
 pp; instate highlight
-pp; instate htop
 pp; instate libmtpserver-dev mtp-server
 pp; instate mediainfo
 pp; instate orpie
@@ -761,7 +780,11 @@ pp; instate riot-web
 pp; instate signal
 reload_options
 if [ ${NordVPN} -eq 1 ]; then
-instate nordvpn
+wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
+sudo apt install nordvpn-release_1.0.0_all.deb
+rm nordvpn-release_1.0.0_all.deb
+sudo apt update
+sudo apt install nordvpn
 fi
 # science and mathematics
 sudo snap install mathpix-snipping-tool
@@ -830,7 +853,10 @@ cd ..
 rm -rf browsers_config
 fi
 # Wine
+## Wine (16.04 LTS)
 pp; instate wine
+## Wine (18.04 LTS)
+pp; instate wine-development
 # VirtualBox
 reload_options
 if [ ${VirtualBox} -eq 1 ]; then
@@ -849,6 +875,19 @@ sudo chmod 750 /home/"${USER}"
 if [ ${make_public_user_account} -eq 1 ]; then
 pp; note "Create public user account, setting passcode to \"public\", full name to \"public\" and everything else to blank."
 sudo adduser public
+fi
+# libinput, synaptics
+if [ ${switch_libinput_to_synaptics} -eq 1 ]; then
+pp; note "Install Synaptics and uninstall libinput."
+sudo apt install xserver-xorg-input-synaptics-hwe-18.04
+sudo apt install xserver-xorg-input-evdev-hwe-18.04
+sudo apt remove xserver-xorg-input-libinput
+sudo apt remove xserver-xorg-input-libinput-hwe-18.04
+fi
+# MATE desktop environment
+if [ ${MATE} -eq 1 ]; then
+pp; note "Install the MATE desktop environment. Switch to lightdm."
+sudo apt install ubuntu-mate-desktop
 fi
 
 ################################################################################
@@ -888,7 +927,7 @@ rm -rf arc-theme
 pp; instate compiz-plugins
 # Bash Agnoster theme with Powerline
 pp; note "set up Bash Agnoster theme with Powerline"
-pp; note "install fonts patched for Powerline"
+pp; note "install fonts patched for Powerline (note: https://superuser.com/a/1336614/705613)"
 mkdir ~/.fonts
 wget --content-disposition -N -O ~/.fonts/Monofur_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20for%20Powerline.ttf
 wget --content-disposition -N -O ~/.fonts/Monofur_Bold_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Bold%20for%20Powerline.ttf
@@ -919,26 +958,33 @@ chmod 755 setup.sh
 ./setup.sh
 rm setup.sh
 # keyboard shortcuts
-# bash -c "xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
-/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py                                      \
-    --command="bash -c \"xvkbd -text \$(date \"+%Y-%m-%dT%H%MZ\" --utc) 2>/dev/null\"" \
-    --name="type_time_UTC"                                                             \
-    --keys="<Control><Shift>d"
-# xcalib -i -a
-/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py \
-    --command="xcalib -i -a"                      \
-    --name="negative"                             \
-    --keys="<Control><Shift>n"
-# xtrlock
-/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py \
-    --command="xtrlock"                           \
-    --name="xtrlock"                              \
-    --keys="<Control><Shift>l"
-# terminal_fullscreen
-/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py     \
-    --command="gnome-terminal --window --full-screen" \
-    --name="terminal_fullscreen"                      \
-    --keys="<Control><Shift>x"
+pp; note "Set some keyboard shortcuts."
+note "Ctrl+Shift+d"
+#bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+echo_pause "bash -c \"sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null\""
+note "Ctrl+Shift+l"
+echo_pause "xtrlock"
+# bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+# Unity7
+#/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py                                      \
+#    --command="bash -c \"sleep 0.1; xvkbd -text \$(date \"+%Y-%m-%dT%H%MZ\" --utc) 2>/dev/null\"" \
+#    --name="type_time_UTC"                                                             \
+#    --keys="<Control><Shift>d"
+## xcalib -i -a
+#/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py \
+#    --command="xcalib -i -a"                      \
+#    --name="negative"                             \
+#    --keys="<Control><Shift>n"
+## xtrlock
+#/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py \
+#    --command="xtrlock"                           \
+#    --name="xtrlock"                              \
+#    --keys="<Control><Shift>l"
+## terminal_fullscreen
+#/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py     \
+#    --command="gnome-terminal --window --full-screen" \
+#    --name="terminal_fullscreen"                      \
+#    --keys="<Control><Shift>x"
 reload_options
 # Indicator-SysMonitor, a little system tray system monitor notification indicator
 pp; note "Indicator-SysMonitor"
@@ -975,7 +1021,7 @@ sudo apt -y autoremove
 pp; note "concluding remarks"
 ################################################################################
 
-pp; echo -e "Enable terminal output on boot. Do this by executing 'gksu gedit /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"'."
+pp; echo -e "Enable terminal output on boot. Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to remove the words \"quiet\" and \"splash\""
 echo_pause "Using Unity Tweak Tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 reload_options
 
