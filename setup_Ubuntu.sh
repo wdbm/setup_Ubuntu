@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-01-29T0150Z"
+version="2020-01-29T0202Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -348,9 +348,11 @@ for current_program in "${@}"; do
             sudo apt update
             sudo apt install riot-web
         elif [[ "$(text_in_lower_case "${current_program}")" == "sage" ]]; then
-            sudo add-apt-repository -y ppa:aims/sagemath
-            sudo apt update
-            sudo apt -y install sagemath-upstream-binary
+            #sudo add-apt-repository -y ppa:aims/sagemath
+            #sudo apt update
+            #sudo apt -y install sagemath-upstream-binary
+            sudo apt -y install build-essential m4 dpkg-dev 
+            sudo apt -y install sagemath
         elif [[ "$(text_in_lower_case "${current_program}")" == "seamonkey" ]]; then
             echo -e "\ndeb http://downloads.sourceforge.net/project/ubuntuzilla/mozilla/apt all main" |sudo tee -a /etc/apt/sources.list > /dev/null
             sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com C1289A29
@@ -556,10 +558,16 @@ pp; instate unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
 pp; instate veracrypt
 # communications
+reload_options
 if [ ${AirVPN} -eq 1 ]; then
 wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
 sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
 sudo apt install eddie-ui
+fi
+# science and mathematics
+reload_options
+if [ ${Sage} -eq 1 ]; then
+    instate sage
 fi
 
 ################################################################################
@@ -792,10 +800,6 @@ reload_options
 if [ ${Mathics} -eq 1 ]; then
     instate mathics
 fi
-reload_options
-if [ ${Sage} -eq 1 ]; then
-    instate sage
-fi
 # desktop environments
 reload_options
 if [ ${LXDE} -eq 1 ]; then
@@ -844,6 +848,7 @@ echo "${text}" | festival --tts &
 ################################################################################
 
 # configure browsers
+reload_options
 if [ ${configure_browsers} -eq 1 ]; then
 pp; note "configure browsers"
 git clone https://github.com/wdbm/browsers_config.git
@@ -872,6 +877,7 @@ sudo nano /etc/updatedb.conf
 # users
 pp; note "Make user private."
 sudo chmod 750 /home/"${USER}"
+reload_options
 if [ ${make_public_user_account} -eq 1 ]; then
 pp; note "Create public user account, setting passcode to \"public\", full name to \"public\" and everything else to blank."
 sudo adduser public
@@ -885,6 +891,7 @@ sudo apt remove xserver-xorg-input-libinput
 sudo apt remove xserver-xorg-input-libinput-hwe-18.04
 fi
 # MATE desktop environment
+reload_options
 if [ ${MATE} -eq 1 ]; then
 pp; note "Install the MATE desktop environment. Switch to lightdm."
 sudo apt install ubuntu-mate-desktop
