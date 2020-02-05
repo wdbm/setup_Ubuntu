@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-01-29T0202Z"
+version="2020-02-05T2039Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -68,17 +68,18 @@ NordVPN=1                         # VPN service
 Nextcloud=1                       # synchronisation of files, contacts, calendars etc.
 Dropbox=0                         # recommendation: no
 LaTeX=1                           # set up LaTeX infrastructure
-LXDE=1                            # install LXDE desktop environment
-MATE=1                            # install MATE desktop environment
-PPELX=0                           # PPELX Wi-Fi setup, printing setup
 ROOT=0                            # install ROOT
 Sage=1                            # install Sage
 Mathics=1                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
-remove_default_home_directories=1 # remove Documents, Music, Pictures, Public, Templates, Videos
 configure_browsers=1              # configure browsers
-make_public_user_account=1        # make a public user account
+PPELX=0                           # PPELX Wi-Fi setup
 switch_libinput_to_synaptics=0    # switch libinput to Synaptics
+remove_default_home_directories=1 # remove Documents, Music, Pictures, Public, Templates, Videos
+make_public_user_account=1        # make a public user account
+LXDE=1                            # install LXDE desktop environment
+MATE=1                            # install MATE desktop environment
+Unity=1                           # install Unity7 desktop environment
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -576,6 +577,8 @@ pp; note "${text}"
 echo "${text}" | festival --tts &
 ################################################################################
 
+# drivers
+instate dkms
 # security
 pp; instate fail2ban
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -800,21 +803,16 @@ reload_options
 if [ ${Mathics} -eq 1 ]; then
     instate mathics
 fi
-# desktop environments
-reload_options
-if [ ${LXDE} -eq 1 ]; then
-pp; instate lxde-common
-fi
 # Nautilus
 pp; instate nautilus-wallpaper-changer
 reload_options
 # tmux (~/.tmux.conf)
 pp; note "set up tmux"
 wget --content-disposition -O ~/.tmux.conf https://raw.githubusercontent.com/wdbm/tmux_config/master/.tmux.conf
-# PPELX (add Glasgow PPE CUPS server and Kelvin Building automated Wi-Fi-login program)
+# PPELX Kelvin Building automated Wi-Fi login
 reload_options
 if [ ${PPELX} -eq 1 ]; then
-# no longer active:
+# add Glasgow PPE CUPS server (no longer active)
 #pp; note "add the Glasgow PPE CUPS server"
 #sudo touch /etc/cups/client.conf
 #IFS= read -d '' text << "EOF"
@@ -869,7 +867,7 @@ pp; instate virtualbox
 fi
 # default open applications
 pp; note "set default applications"
-echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\""
+echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\"."
 # mlocate
 pp; note "set up mlocate"
 echo_pause "Prevent `/media`, `/home/.ecryptfs` and `ecryptfs` from being pruned by mlocate."
@@ -890,11 +888,21 @@ sudo apt install xserver-xorg-input-evdev-hwe-18.04
 sudo apt remove xserver-xorg-input-libinput
 sudo apt remove xserver-xorg-input-libinput-hwe-18.04
 fi
-# MATE desktop environment
+# desktop environments
+reload_options
+if [ ${LXDE} -eq 1 ]; then
+pp; note "Install the LXDE desktop environment. Switch to lightdm."
+pp; instate lxde-common
+fi
 reload_options
 if [ ${MATE} -eq 1 ]; then
 pp; note "Install the MATE desktop environment. Switch to lightdm."
-sudo apt install ubuntu-mate-desktop
+instate ubuntu-mate-desktop
+fi
+reload_options
+if [ ${Unity} -eq 1 ]; then
+pp; note "Install the Unity7 desktop environment. Switch to lightdm."
+instate ubuntu-unity-desktop
 fi
 
 ################################################################################
@@ -972,6 +980,8 @@ echo_pause "bash -c \"sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/
 note "Ctrl+Shift+l"
 echo_pause "xtrlock"
 # bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+# python -c "import uuid; print(uuid.uuid4())"
+# bash -c "TEXT="$(python -c "import uuid; print(uuid.uuid4())")"; xvkbd -text "${TEXT}" 2>/dev/null"
 # Unity7
 #/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py                                      \
 #    --command="bash -c \"sleep 0.1; xvkbd -text \$(date \"+%Y-%m-%dT%H%MZ\" --utc) 2>/dev/null\"" \
@@ -1029,7 +1039,7 @@ pp; note "concluding remarks"
 ################################################################################
 
 pp; echo -e "Enable terminal output on boot. Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to remove the words \"quiet\" and \"splash\""
-echo_pause "Using Unity Tweak Tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
+echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 reload_options
 
 ################################################################################
