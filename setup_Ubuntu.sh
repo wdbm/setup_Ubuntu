@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-02-05T2039Z"
+version="2020-02-17T1603Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -263,49 +263,6 @@ for current_program in "${@}"; do
             wget https://linux.dropbox.com/packages/ubuntu/dropbox_2.10.0_amd64.deb
             sudo dpkg -i dropbox_2.10.0_amd64.deb
             rm dropbox_2.10.0_amd64.deb
-        #elif [[ "$(text_in_lower_case "${current_program}")" == "ffmpeg" ]]; then
-        #    sudo apt remove -y ffmpeg
-        #    sudo apt update
-        #    sudo apt -y install   \
-        #        autoconf          \
-        #        automake          \
-        #        build-essential   \
-        #        cmake             \
-        #        git-core          \
-        #        libass-dev        \
-        #        libfreetype6-dev  \
-        #        libsdl2-dev       \
-        #        libtool           \
-        #        libva-dev         \
-        #        libvdpau-dev      \
-        #        libvorbis-dev     \
-        #        libxcb1-dev       \
-        #        libxcb-shm0-dev   \
-        #        libxcb-xfixes0-dev\
-        #        pkg-config        \
-        #        texinfo           \
-        #        wget              \
-        #        zlib1g-dev
-        #    sudo apt install      \
-        #        libx264-dev       \
-        #        libmp3lame-dev    \
-        #        libopus-dev       \
-        #        yasm
-        #    _version="4.1.1"
-        #    wget http://ffmpeg.org/releases/ffmpeg-"${_version}".tar.bz2
-        #    tar -xvf ffmpeg-"${_version}".tar.bz2
-        #    cd ffmpeg-"${_version}"
-        #    ./configure            \
-        #        --enable-gpl       \
-        #        --enable-libmp3lame\
-        #        --enable-libopus   \
-        #        --enable-libvorbis \
-        #        --enable-libx264
-        #    make -j"$(echo "$(nproc)-1" | bc)"
-        #    sudo make install
-        #    cd ..
-        #    rm ffmpeg-"${_version}".tar.bz2
-        #    rm -rf ffmpeg-"${_version}"
         elif [[ "$(text_in_lower_case "${current_program}")" == "gimp-plugin-registry" ]]; then
             sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
             sudo apt update
