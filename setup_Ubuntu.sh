@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-02-17T1603Z"
+version="2020-04-28T2243Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -652,6 +652,7 @@ sudo pip3.6 install youtube_dl
 pp; instate youtube-dlg
 pp; instate simplescreenrecorder
 pp; instate cheese
+pp; instate fswebcam
 pp; instate hollywood
 # music
 pp; instate hydrogen
@@ -663,6 +664,7 @@ rm Popcorn_Time.tar.gz
 pp; instate gimp
 pp; instate gimp-plugin-registry
 pp; instate imagemagick
+pp; instate webp
 pp; instate hugin
 pp; instate inkscape
 pp; note "install Instagram download program Instaloader"
