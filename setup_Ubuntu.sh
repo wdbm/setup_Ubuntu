@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-04-28T2243Z"
+version="2020-05-22T1649Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -294,6 +294,10 @@ for current_program in "${@}"; do
             rm nordvpn-release_1.0.0_all.deb
             sudo apt update
             sudo apt install nordvpn
+        elif [[ "$(text_in_lower_case "${current_program}")" == "nuclear" ]]; then
+            wget https://github.com/nukeop/nuclear/releases/download/v0.6.3/nuclear-fca030.deb
+            sudo dpkg -i nuclear-fca030.deb
+            rm nuclear-fca030.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "playonlinux" ]]; then
             wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
             sudo wget http://deb.playonlinux.com/playonlinux_precise.list -O /etc/apt/sources.list.d/playonlinux.list
@@ -656,6 +660,7 @@ pp; instate fswebcam
 pp; instate hollywood
 # music
 pp; instate hydrogen
+pp; instate nuclear
 # Popcorn Time
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
 tar -xvf ~/Popcorn_Time.tar.gz --directory="${HOME}"
