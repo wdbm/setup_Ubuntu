@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-05-22T1649Z"
+version="2020-10-04T0026Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -972,9 +972,10 @@ pp; note "Indicator-SysMonitor"
 sudo add-apt-repository -y ppa:fossfreedom/indicator-sysmonitor
 sudo apt update
 sudo apt install -y indicator-sysmonitor
-note "Set Indicator-SysMonitor to run on startup and set the output format to the following:"
+note "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor (the full path, not normally needed, is  and set the output format to the following:"
 #echo_pause "\"net: {net} IP: {publicip} | cpu: {cpu} temp: {cputemp} mem: {mem} fs: {fs///}\""
 echo_pause "{net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}"
+So the specific text for its configuration field is as follows: {net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
