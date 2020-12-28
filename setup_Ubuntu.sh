@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-10-04T0026Z"
+version="2020-12-28T0926Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -801,6 +801,15 @@ Action=org.freedesktop.login1.hibernate
 ResultActive=yes
 EOF
 echo "${text}" | sudo tee /etc/polkit-1/localauthority/50-local.d/com.ubuntu.enable-hibernate.pkla
+# restart mouse after suspend
+pp; note "restart mouse after suspend";
+IFS= read -d '' text << "EOF"
+#!/bin/bash
+[ "${1}" = "post" ] && exec modprobe psmouse
+[ "${1}" = "pre" ] && exec rmmod psmouse
+exit 0
+EOF
+echo "${text}" | sudo tee /lib/systemd/system-sleep/restartmouse
 
 ################################################################################
 pp
