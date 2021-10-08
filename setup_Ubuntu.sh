@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2020-12-28T0926Z"
+version="2021-09-23T1725Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -75,7 +75,7 @@ VirtualBox=0                      # install VirtualBox VM software
 configure_browsers=1              # configure browsers
 PPELX=0                           # PPELX Wi-Fi setup
 switch_libinput_to_synaptics=0    # switch libinput to Synaptics
-remove_default_home_directories=1 # remove Documents, Music, Pictures, Public, Templates, Videos
+remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
 make_public_user_account=1        # make a public user account
 LXDE=1                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
@@ -402,7 +402,7 @@ pip23(){
     # pip2 and pip3 install
     programs="${@}"
     echo "using pip2, pip3 and pip3.6, install or upgrade "${programs}""
-    sudo pip2 install "${programs}" --upgrade
+    sudo pip install "${programs}" --upgrade
     sudo pip3 install "${programs}" --upgrade
     sudo pip3.6 install "${programs}" --upgrade
 }
@@ -490,29 +490,6 @@ fi
 if [ ${Nextcloud} -eq 1 ]; then
 pp; instate nextcloud
 fi
-# SSH client
-pp; note "add SSH configurations to keep connections alive"
-IFS= read -d '' text << "EOF"
-TCPKeepAlive yes
-ExitOnForwardFailure yes
-ServerAliveInterval 60
-Protocol 2,1
-EOF
-if grep -Fxq "ServerAliveInterval" /etc/ssh/ssh_config; then
-    echo "configuration found, not overwriting"
-else
-    echo "${text}" | sudo tee -a /etc/ssh/ssh_config
-fi
-# SSH server
-IFS= read -d '' text << "EOF"
-ClientAliveInterval 60
-EOF
-if grep -Fxq "ClientAliveInterval" /etc/ssh/sshd_config; then
-    echo "configuration found, not overwriting"
-else
-    echo "${text}" | sudo tee -a /etc/ssh/sshd_config
-fi
-pp
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 instate ubuntu-restricted-extras
 # security
@@ -561,30 +538,56 @@ pp; instate chromium-browser
 pp; instate globus-gsi-cert-utils-progs
 # networking
 pp; instate openssh-server
-pp; instate vncviewer
-pp; instate vnc4server
+# SSH client
+pp; note "add SSH configurations to keep connections alive"
+IFS= read -d '' text << "EOF"
+TCPKeepAlive yes
+ExitOnForwardFailure yes
+ServerAliveInterval 60
+Protocol 2,1
+EOF
+if grep -Fxq "ServerAliveInterval" /etc/ssh/ssh_config; then
+    echo "configuration found, not overwriting"
+else
+    echo "${text}" | sudo tee -a /etc/ssh/ssh_config
+fi
+# SSH server
+IFS= read -d '' text << "EOF"
+ClientAliveInterval 60
+EOF
+if grep -Fxq "ClientAliveInterval" /etc/ssh/sshd_config; then
+    echo "configuration found, not overwriting"
+else
+    echo "${text}" | sudo tee -a /etc/ssh/sshd_config
+fi
+pp
+pp; instate xtightvncviewer #vncviewer
+pp; instate tightvncserver #vnc4server
 pp; instate screen
 pp; instate tmux
+pp; instate tilix
 # coding, utilities
 pp; instate build-essential
 pp; instate checkinstall
 pp; instate cmus
 pp; instate cython
 pp; instate faad
+pp; instate lame
+pp; instate libsox-fmt-all
+pp; instate libtheora-dev
+pp; instate mediainfo
 # FFmpeg
-git clone https://github.com/wdbm/FFmpeg_config.git
-cd FFmpeg_config
-./setup.sh
-cd ..
-rm -rf FFmpeg_config
+#git clone https://github.com/wdbm/FFmpeg_config.git
+#cd FFmpeg_config
+#./setup.sh
+#cd ..
+#rm -rf FFmpeg_config
+pp; instate ffmpeg
 pp; instate figlet
 pp; instate git
 pp; instate git-core
 pp; instate htop
 pp; instate iftop
-pp; instate lame
-pp; instate libsox-fmt-all
-pp; instate mediainfo
 pp; instate mlocate
 pp; instate nano
 pp; instate nethogs
@@ -650,10 +653,11 @@ pp; note "remove Totem"
 sudo apt -y remove totem
 pp; instate openshot
 pp; instate ffmpeg
-pp; instate gnash
+#pp; instate gnash
+# LightSpark Flash player
 pp; note "install youtube-dl"
 sudo pip3.6 install youtube_dl
-pp; instate youtube-dlg
+#pp; instate youtube-dlg
 pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate fswebcam
@@ -751,8 +755,8 @@ sudo pip3.6 install\
     william_blake_crypto
 reload_options
 # communications
-pp; instate riot-web
-pp; instate signal
+#pp; instate riot-web
+#pp; instate signal
 reload_options
 if [ ${NordVPN} -eq 1 ]; then
 wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
@@ -983,8 +987,7 @@ sudo apt update
 sudo apt install -y indicator-sysmonitor
 note "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor (the full path, not normally needed, is  and set the output format to the following:"
 #echo_pause "\"net: {net} IP: {publicip} | cpu: {cpu} temp: {cputemp} mem: {mem} fs: {fs///}\""
-echo_pause "{net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}"
-So the specific text for its configuration field is as follows: {net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}
+echo_pause "{net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///} -- So the specific text for its configuration field is as follows: {net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}"
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
