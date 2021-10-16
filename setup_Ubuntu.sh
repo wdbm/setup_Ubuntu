@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2021-09-23T1725Z"
+version="2021-10-16T2205Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -401,10 +401,9 @@ done
 pip23(){
     # pip2 and pip3 install
     programs="${@}"
-    echo "using pip2, pip3 and pip3.6, install or upgrade "${programs}""
+    echo "using pip2 and pip3, install or upgrade "${programs}""
     sudo pip install "${programs}" --upgrade
     sudo pip3 install "${programs}" --upgrade
-    sudo pip3.6 install "${programs}" --upgrade
 }
 
 # install prerequisites
@@ -597,20 +596,19 @@ pp; instate sockstat
 pp; instate sox
 pp; instate tree
 # Python
-sudo add-apt-repository -y ppa:deadsnakes/ppa # Python 3.6
+sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo apt update
 pp; instate python-dev
 pp; instate python-tk
 pp; instate python3-dev
 pp; instate python3-tk
-pp; instate python3.6
-pp; instate python3.6-dev
-pp; instate python3.6-tk
+#pp; instate python3.8
+pp; instate python3.8-dev
+pp; instate python3.8-tk
 # pip
 wget -N https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
 sudo python3 get-pip.py
-sudo python3.6 get-pip.py
 rm get-pip.py
 # Pandoc
 pip23 install pypandoc
@@ -656,7 +654,9 @@ pp; instate ffmpeg
 #pp; instate gnash
 # LightSpark Flash player
 pp; note "install youtube-dl"
-sudo pip3.6 install youtube_dl
+sudo pip install youtube_dl
+pp; note "install yt-dlp"
+sudo pip install yt-dlp
 #pp; instate youtube-dlg
 pp; instate simplescreenrecorder
 pp; instate cheese
@@ -677,10 +677,10 @@ pp; instate webp
 pp; instate hugin
 pp; instate inkscape
 pp; note "install Instagram download program Instaloader"
-sudo pip3.6 install instaloader
+sudo pip install instaloader
 pp; note "install gallery download program gallery-dl"
-sudo pip3.6 install chardet
-sudo pip3.6 install gallery-dl
+sudo pip install chardet
+sudo pip install gallery-dl
 # gcolor2
 pp; instate gcolor2
 wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcolor2/gcolor2_0.4-2.1ubuntu1_amd64.deb
@@ -735,9 +735,10 @@ pp; instate xcalib
 pp; instate xtrlock
 pp; instate xvkbd
 # Python
-sudo pip3.6 install\
+sudo pip install\
     bochica        \
     che_guevara_otp\
+    hualang        \
     matplotlib     \
     numpy          \
     pandas         \
@@ -789,7 +790,7 @@ if [ ${PPELX} -eq 1 ]; then
 #echo "${text}" | sudo tee -a /etc/cups/client.conf
 #sudo service cups restart
 pp; note "install Glasgow PPE WiFi -- suck_lord_kelvin_cock"
-sudo pip3.6 install slokc
+sudo pip install slokc
 fi
 # hibernation
 pp; note "set up hibernation";
@@ -844,7 +845,7 @@ pp; instate virtualbox
 fi
 # default open applications
 pp; note "set default applications"
-echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\"."
+echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
 # mlocate
 pp; note "set up mlocate"
 echo_pause "Prevent `/media`, `/home/.ecryptfs` and `ecryptfs` from being pruned by mlocate."
@@ -908,13 +909,15 @@ sudo make install
 cd ..
 rm -rf arc-icon-theme
 # Arc themes
-git clone https://github.com/horst3180/arc-theme
-cd arc-theme
-./autogen.sh --prefix=/usr
-make -j$(nproc)
-sudo make install
-cd ..
-rm -rf arc-theme
+#old:
+#git clone https://github.com/horst3180/arc-theme
+#cd arc-theme
+#./autogen.sh --prefix=/usr
+#make -j$(nproc)
+#sudo make install
+#cd ..
+#rm -rf arc-theme
+sudo apt install arc-theme
 # Compiz
 pp; instate compiz-plugins
 # Bash Agnoster theme with Powerline
@@ -952,6 +955,7 @@ rm setup.sh
 # keyboard shortcuts
 pp; note "Set some keyboard shortcuts."
 note "Ctrl+Shift+d"
+# The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 #bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
 echo_pause "bash -c \"sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null\""
 note "Ctrl+Shift+l"
