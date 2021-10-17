@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2021-10-16T2205Z"
+version="2021-10-17T2051Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -740,6 +740,7 @@ sudo pip install\
     che_guevara_otp\
     hualang        \
     matplotlib     \
+    media_editing  \
     numpy          \
     pandas         \
     pyprel         \
@@ -896,11 +897,11 @@ instate numix-icon-theme
 instate numix-icon-theme-circle
 # Arc icons
 instate build-essential\
-        autoconf       \
-        automake       \
-        pkg-config     \
-        libgtk-3.0     \
-        libgtk-3-dev
+    autoconf           \
+    automake           \
+    pkg-config         \
+    libgtk-3.0         \
+    libgtk-3-dev
 git clone https://github.com/horst3180/arc-icon-theme
 cd arc-icon-theme
 ./autogen.sh --prefix=/usr
