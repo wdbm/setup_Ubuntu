@@ -45,7 +45,7 @@
 #                                                                              #
 ################################################################################
 
-version="2021-10-17T2051Z"
+version="2021-11-15T0608Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -313,7 +313,7 @@ for current_program in "${@}"; do
             #sudo add-apt-repository -y ppa:aims/sagemath
             #sudo apt update
             #sudo apt -y install sagemath-upstream-binary
-            sudo apt -y install build-essential m4 dpkg-dev 
+            sudo apt -y install build-essential m4 dpkg-dev
             sudo apt -y install sagemath
         elif [[ "$(text_in_lower_case "${current_program}")" == "seamonkey" ]]; then
             echo -e "\ndeb http://downloads.sourceforge.net/project/ubuntuzilla/mozilla/apt all main" |sudo tee -a /etc/apt/sources.list > /dev/null
@@ -431,14 +431,14 @@ echo_pause "${text}"
 ################################################################################
 # terminal style
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
-uuid_profile_default="$(gsettings get org.gnome.Terminal.ProfilesList default)"
+uuid_profile_default="$(gsettings get org.gnome.Terminal.ProfilesList default)" # returns UUID4 profile label
 uuid_profile_default="${uuid_profile_default:1:-1}" # remove leading and trailing single quotes
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/scrollback-unlimited true
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/use-theme-colors false
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/foreground-color "#ffffff"
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/background-color "#000000"
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/use-transparent-background true
-gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${profile}/background-transparency-percent "10"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ scrollback-unlimited true
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ use-theme-colors false
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ foreground-color "#ffffff"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-color "#000000"
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ use-transparent-background true
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-transparency-percent "10"
 # sound, display, power
 echo_pause "Set sound settings as required (allow loud volume etc.)"
 echo_pause "Set power settings as necessary."
@@ -476,19 +476,10 @@ echo "add current user ("${USER}") to the group VeraCrypt"
 sudo gpasswd -a "${USER}" veracrypt
 # coding
 pp; instate build-essential checkinstall git
-pp; note "install GCC 4.9";
-sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-sudo apt update
-instate gcc-4.9
-# Dropbox
-reload_options
-if [ ${Dropbox} -eq 1 ]; then
-pp; instate dropbox
-fi
-# Nextcloud
-if [ ${Nextcloud} -eq 1 ]; then
-pp; instate nextcloud
-fi
+#pp; note "install GCC 4.9";
+#sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#sudo apt update
+#instate gcc-4.9
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 instate ubuntu-restricted-extras
 # security
@@ -502,17 +493,31 @@ wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo
 sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
 sudo apt install eddie-ui
 fi
-# science and mathematics
-reload_options
-if [ ${Sage} -eq 1 ]; then
-    instate sage
-fi
 
 ################################################################################
 text="initial script interactions complete"
 pp; note "${text}"
 echo "${text}" | festival --tts &
 ################################################################################
+
+# Synchronisation software below could be moved to initial script interactions
+# to enable synchronisation to happen while this script runs.
+
+# Dropbox
+reload_options
+if [ ${Dropbox} -eq 1 ]; then
+pp; instate dropbox
+fi
+# Nextcloud
+if [ ${Nextcloud} -eq 1 ]; then
+pp; instate nextcloud
+fi
+
+# science and mathematics
+reload_options
+if [ ${Sage} -eq 1 ]; then
+    instate sage #sagemath
+fi
 
 # drivers
 instate dkms
@@ -662,6 +667,12 @@ pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate fswebcam
 pp; instate hollywood
+# sound
+# Audio Recorder
+wget https://raw.githubusercontent.com/wdbm/media_editing/master/setup/audio-recorder/audio-recorder_1.7-5%7Exenial_amd64.deb
+sudo dpkg -i audio-recorder_1.7-5~xenial_amd64.deb
+rm audio-recorder_1.7-5~xenial_amd64.deb
+rm
 # music
 pp; instate hydrogen
 pp; instate nuclear
@@ -742,6 +753,7 @@ sudo pip install\
     matplotlib     \
     media_editing  \
     numpy          \
+    nvtop          \
     pandas         \
     pyprel         \
     pyprel         \
@@ -848,8 +860,8 @@ fi
 pp; note "set default applications"
 echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
 # mlocate
-pp; note "set up mlocate"
-echo_pause "Prevent `/media`, `/home/.ecryptfs` and `ecryptfs` from being pruned by mlocate."
+#pp; note "set up mlocate"
+echo_pause "Prevent /media from being pruned by mlocate."
 sudo nano /etc/updatedb.conf
 # users
 pp; note "Make user private."
@@ -897,11 +909,11 @@ instate numix-icon-theme
 instate numix-icon-theme-circle
 # Arc icons
 instate build-essential\
-    autoconf           \
-    automake           \
-    pkg-config         \
-    libgtk-3.0         \
-    libgtk-3-dev
+        autoconf       \
+        automake       \
+        pkg-config     \
+instate libgtk-3.0
+instate libgtk-3-dev
 git clone https://github.com/horst3180/arc-icon-theme
 cd arc-icon-theme
 ./autogen.sh --prefix=/usr
@@ -985,14 +997,20 @@ echo_pause "xtrlock"
 #    --name="terminal_fullscreen"                      \
 #    --keys="<Control><Shift>x"
 reload_options
-# Indicator-SysMonitor, a little system tray system monitor notification indicator
+
+# Indicator-SysMonitor (a system tray system monitor notification indicator)
 pp; note "Indicator-SysMonitor"
-sudo add-apt-repository -y ppa:fossfreedom/indicator-sysmonitor
-sudo apt update
-sudo apt install -y indicator-sysmonitor
-note "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor (the full path, not normally needed, is  and set the output format to the following:"
-#echo_pause "\"net: {net} IP: {publicip} | cpu: {cpu} temp: {cputemp} mem: {mem} fs: {fs///}\""
-echo_pause "{net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///} -- So the specific text for its configuration field is as follows: {net}|{publicip}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}"
+instate python3-psutil gir1.2-appindicator3-0.1
+git clone https://github.com/wdbm/indicator-sysmonitor.git
+cd indicator-sysmonitor
+sudo make install
+cd ..
+rm -rf indicator-sysmonitor
+nohup indicator-sysmonitor &
+IFS= read -d '' text << "EOF"
+|{net}	|{publiccountryiso}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}|
+EOF
+echo_pause "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate. The following is an example:\n"${text}"\n"
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
@@ -1006,7 +1024,6 @@ fi
 ################################################################################
 text="final script interactions complete"
 pp; note "${text}"
-echo_pause "${text}"
 ################################################################################
 
 # Autoremove unused packages.
@@ -1020,7 +1037,7 @@ sudo apt -y autoremove
 pp; note "concluding remarks"
 ################################################################################
 
-pp; echo -e "Enable terminal output on boot. Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to remove the words \"quiet\" and \"splash\""
+pp; echo -e "Enable terminal output on boot. Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
 echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 reload_options
 
