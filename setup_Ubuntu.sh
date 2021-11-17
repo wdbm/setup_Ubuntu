@@ -26,7 +26,7 @@
 # more details.                                                                #
 #                                                                              #
 # For a copy of the GNU General Public License, see                            #
-# <http://www.gnu.org/licenses/>.                                              #
+# <http://www.gnu.org/licenses>.                                               #
 #                                                                              #
 ################################################################################
 
@@ -41,11 +41,10 @@
 #                                                                              #
 # UPCOMING                                                                     #
 # consideration of https://en.wikipedia.org/wiki/CheckInstall                  #
-# instate AirVPN                                                               #
 #                                                                              #
 ################################################################################
 
-version="2021-11-15T0608Z"
+version="2021-11-17T0832Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -79,7 +78,7 @@ remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, T
 make_public_user_account=1        # make a public user account
 LXDE=1                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
-Unity=1                           # install Unity7 desktop environment
+Unity=0                           # install Unity7 desktop environment
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -228,7 +227,11 @@ for current_program in "${@}"; do
         #    sudo gdebi --non-interactive AdbeRdr9.5.5-1_i386linux_enu.deb
         #    sudo apt -y install libgtk2.0-0:i386 libnss3-1d:i386 libnspr4-0d:i386 lib32nss-mdns* libxml2:i386 libxslt1.1:i386 libstdc++6:i386
         #    rm AdbeRdr9.5.5-1_i386linux_enu.deb
-        if [[ "$(text_in_lower_case "${current_program}")" == "bitcoin" ]]; then
+        if [[ "$(text_in_lower_case "${current_program}")" == "airvpn" ]]; then
+            wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
+            sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
+            sudo apt -y install eddie-ui
+        elif [[ "$(text_in_lower_case "${current_program}")" == "bitcoin" ]]; then
             sudo add-apt-repository -y ppa:bitcoin/bitcoin
             sudo apt update
             sudo apt -y install bitcoin-qt
@@ -430,6 +433,7 @@ text="starting initial script interactions"
 echo_pause "${text}"
 ################################################################################
 # terminal style
+pp; echo "set up terminal style"
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
 uuid_profile_default="$(gsettings get org.gnome.Terminal.ProfilesList default)" # returns UUID4 profile label
 uuid_profile_default="${uuid_profile_default:1:-1}" # remove leading and trailing single quotes
@@ -439,14 +443,27 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-color "#000000"
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ use-transparent-background true
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-transparency-percent "10"
+# install Powerline fonts
+pp; note "install fonts patched for Powerline (note: https://superuser.com/a/1336614/705613)"
+# install Powerline fonts for user
+mkdir ~/.fonts
+wget --content-disposition -N -O ~/.fonts/Monofur_for_Powerline.ttf                           https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20for%20Powerline.ttf
+wget --content-disposition -N -O ~/.fonts/Monofur_Bold_for_Powerline.ttf                      https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Bold%20for%20Powerline.ttf
+wget --content-disposition -N -O ~/.fonts/Monofur_Italic_for_Powerline.ttf                    https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Italic%20for%20Powerline.ttf
+# install Powerline fonts for system
+sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_for_Powerline.ttf        https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20for%20Powerline.ttf
+sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_Bold_for_Powerline.ttf   https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Bold%20for%20Powerline.ttf
+sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_Italic_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Italic%20for%20Powerline.ttf
+gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ font "monofur for Powerline bold 12"
 # sound, display, power
+instate pulseaudio-utils
 echo_pause "Set sound settings as required (allow loud volume etc.)"
 echo_pause "Set power settings as necessary."
 echo_pause "Set display settings as necessary. Turn off sticky edges."
 # root privileges for programs
 echo -e "Set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
+#Defaults        timestamp_timeout=60
 IFS= read -d '' text << "EOF"
-Defaults        timestamp_timeout=60
 # Allow users of the group airvpn to run AirVPN as root.
 %airvpn ALL=(root) NOPASSWD:/usr/bin/airvpn
 %airvpn ALL=(root) NOPASSWD:/usr/bin/eddie-ui
@@ -457,20 +474,21 @@ Defaults        timestamp_timeout=60
 EOF
 echo "${text}"
 echo
+echo -e "This is also an opportunity to customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
 echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
 sudo visudo
 # AirVPN
-echo "create airvpn group"
+pp; echo "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
 sudo gpasswd -a "${USER}" airvpn
 # OpenVPN
-echo "create openvpn group"
+pp; echo "create openvpn group"
 sudo groupadd openvpn
 sudo gpasswd -a "${USER}" openvpn
 echo "add current user ("${USER}") to the group openvpn"
 # VeraCrypt
-echo "create veracrypt group"
+pp; echo "create veracrypt group"
 sudo groupadd veracrypt
 echo "add current user ("${USER}") to the group VeraCrypt"
 sudo gpasswd -a "${USER}" veracrypt
@@ -480,6 +498,7 @@ pp; instate build-essential checkinstall git
 #sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 #sudo apt update
 #instate gcc-4.9
+pp; echo "install fonts etc."
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 instate ubuntu-restricted-extras
 # security
@@ -489,9 +508,7 @@ pp; instate veracrypt
 # communications
 reload_options
 if [ ${AirVPN} -eq 1 ]; then
-wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
-sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
-sudo apt install eddie-ui
+pp; instate AirVPN
 fi
 
 ################################################################################
@@ -669,10 +686,10 @@ pp; instate fswebcam
 pp; instate hollywood
 # sound
 # Audio Recorder
+pp; echo "instate Audio Recorder"
 wget https://raw.githubusercontent.com/wdbm/media_editing/master/setup/audio-recorder/audio-recorder_1.7-5%7Exenial_amd64.deb
 sudo dpkg -i audio-recorder_1.7-5~xenial_amd64.deb
 rm audio-recorder_1.7-5~xenial_amd64.deb
-rm
 # music
 pp; instate hydrogen
 pp; instate nuclear
@@ -935,12 +952,6 @@ sudo apt install arc-theme
 pp; instate compiz-plugins
 # Bash Agnoster theme with Powerline
 pp; note "set up Bash Agnoster theme with Powerline"
-pp; note "install fonts patched for Powerline (note: https://superuser.com/a/1336614/705613)"
-mkdir ~/.fonts
-wget --content-disposition -N -O ~/.fonts/Monofur_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20for%20Powerline.ttf
-wget --content-disposition -N -O ~/.fonts/Monofur_Bold_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Bold%20for%20Powerline.ttf
-wget --content-disposition -N -O ~/.fonts/Monofur_Italic_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Italic%20for%20Powerline.ttf
-wget --content-disposition -N -O ~/.fonts/Monofur_Italic_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Italic%20for%20Powerline.ttf
 pp; note "install Agnoster"
 mkdir -p ${HOME}/.bash/themes/agnoster-bash
 git clone https://github.com/speedenator/agnoster-bash.git ${HOME}/.bash/themes/agnoster-bash
@@ -965,17 +976,50 @@ wget https://raw.githubusercontent.com/wdbm/ucomsys/master/setup.sh
 chmod 755 setup.sh
 ./setup.sh
 rm setup.sh
-# keyboard shortcuts
+
+################################################################################
+#                                                                              #
+# keyboard shortcuts                                                           #
+#                                                                              #
+################################################################################
+
 pp; note "Set some keyboard shortcuts."
-note "Ctrl+Shift+d"
+
+# shortkey: type datetime
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
-#bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
-echo_pause "bash -c \"sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null\""
+# bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+note "Ctrl+Shift+d"
+IFS= read -d '' text << "EOF"
+bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+EOF
+echo_pause "${text}"
+
+# shortkey: xtrlock
 note "Ctrl+Shift+l"
 echo_pause "xtrlock"
-# bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+
+# shortkey: volume up
+# The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
+# pactl set-sink-volume @DEFAULT_SINK@ +5%
+note "volume up key"
+IFS= read -d '' text << "EOF"
+pactl set-sink-volume @DEFAULT_SINK@ +5%
+EOF
+echo_pause "${text}"
+
+# shortkey: volume down
+# The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
+# pactl set-sink-volume @DEFAULT_SINK@ -5%
+note "volume down key"
+IFS= read -d '' text << "EOF"
+pactl set-sink-volume @DEFAULT_SINK@ -5%
+EOF
+echo_pause "${text}"
+
+# for future consideration:
 # python -c "import uuid; print(uuid.uuid4())"
 # bash -c "TEXT="$(python -c "import uuid; print(uuid.uuid4())")"; xvkbd -text "${TEXT}" 2>/dev/null"
+
 # Unity7
 #/usr/share/ucom/CERN-alias/set_Ubuntu_shortkey.py                                      \
 #    --command="bash -c \"sleep 0.1; xvkbd -text \$(date \"+%Y-%m-%dT%H%MZ\" --utc) 2>/dev/null\"" \
@@ -1008,9 +1052,10 @@ cd ..
 rm -rf indicator-sysmonitor
 nohup indicator-sysmonitor &
 IFS= read -d '' text << "EOF"
-|{net}	|{publiccountryiso}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}|
+|{net}    |{publiccountryiso}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}|
 EOF
-echo_pause "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate. The following is an example:\n"${text}"\n"
+echo_pause "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate."
+echo -e "The following is an example:\n\n"${text}"\n\n"
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
@@ -1037,7 +1082,8 @@ sudo apt -y autoremove
 pp; note "concluding remarks"
 ################################################################################
 
-pp; echo -e "Enable terminal output on boot. Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
+pp; echo -e "Enable terminal output on boot."
+echo -e "Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
 echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 reload_options
 
@@ -1050,3 +1096,4 @@ pp
 ################################################################################
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::END:
+
