@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2021-11-17T0832Z"
+version="2022-01-18T0119Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -691,6 +691,7 @@ wget https://raw.githubusercontent.com/wdbm/media_editing/master/setup/audio-rec
 sudo dpkg -i audio-recorder_1.7-5~xenial_amd64.deb
 rm audio-recorder_1.7-5~xenial_amd64.deb
 # music
+pp; instate audacious
 pp; instate hydrogen
 pp; instate nuclear
 # Popcorn Time
