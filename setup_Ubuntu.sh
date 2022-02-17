@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-01-18T0119Z"
+version="2022-02-17T0429Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -279,6 +279,10 @@ for current_program in "${@}"; do
         #    sudo apt -y install libc6:i386 lsb-core
         #    sudo dpkg -i google-earth-stable_7.1.2.2041_amd64.deb
         #    rm google-earth-stable_7.1.2.2041_amd64.deb
+        elif [[ "$(text_in_lower_case "${current_program}")" == "jitsi" ]]; then
+            wget https://github.com/jitsi/jitsi-meet-electron/releases/download/v2022.1.1/jitsi-meet-x86_64.AppImage
+            chmod 755 jitsi-meet-x86_64.AppImage
+            ./jitsi-meet-x86_64.AppImage
         elif [[ "$(text_in_lower_case "${current_program}")" == "mathics" ]]; then
             git clone https://github.com/poeschko/Mathics.git
             cd Mathics/
@@ -324,11 +328,20 @@ for current_program in "${@}"; do
             sudo apt update
             sudo apt -y install seamonkey-mozilla-build
         elif [[ "$(text_in_lower_case "${current_program}")" == "signal" ]]; then
-            source /etc/os-release
-            curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
-            echo "deb [arch=amd64] https://updates.signal.org/desktop/apt "${UBUNTU_CODENAME}" main" | sudo tee -a /etc/apt/sources.list.d/signal-"${UBUNTU_CODENAME}".list
+            #source /etc/os-release
+            #curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
+            #echo "deb [arch=amd64] https://updates.signal.org/desktop/apt "${UBUNTU_CODENAME}" main" | sudo tee -a /etc/apt/sources.list.d/signal-"${UBUNTU_CODENAME}".list
+            #sudo apt update
+            #sudo apt install signal-desktop
+            # install Signal public software signing key
+            wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+            cat signal-desktop-keyring.gpg | sudo tee -a /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+            # install Signal repository to your list of repositories
+            echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
+                sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+            # update package database and install signal
             sudo apt update
-            sudo apt install signal-desktop
+            sudo apt -y install signal-desktop
         elif [[ "$(text_in_lower_case "${current_program}")" == "simplescreenrecorder" ]]; then
             sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
             sudo apt update
@@ -510,6 +523,12 @@ reload_options
 if [ ${AirVPN} -eq 1 ]; then
 pp; instate AirVPN
 fi
+# AppImageLauncher
+pp; echo "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
+sudo add-apt-repository -y ppa:appimagelauncher-team/stable
+sudo apt update
+sudo apt -y install appimagelauncher
+pp; instate jitsi
 
 ################################################################################
 text="initial script interactions complete"
@@ -788,7 +807,7 @@ sudo pip install\
 reload_options
 # communications
 #pp; instate riot-web
-#pp; instate signal
+pp; instate signal
 reload_options
 if [ ${NordVPN} -eq 1 ]; then
 wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
