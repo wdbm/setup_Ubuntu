@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-02-17T0429Z"
+version="2022-03-03T1724Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -64,7 +64,8 @@ EOF
 
 AirVPN=1                          # VPN service
 NordVPN=1                         # VPN service
-Nextcloud=1                       # synchronisation of files, contacts, calendars etc.
+Nextcloud=0                       # synchronisation of files, contacts, calendars etc.
+Syncthing=1                       # synchronisation of files, contacts, calendars etc.
 Dropbox=0                         # recommendation: no
 LaTeX=1                           # set up LaTeX infrastructure
 ROOT=0                            # install ROOT
@@ -361,6 +362,12 @@ for current_program in "${@}"; do
         #    sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i skype-call-recorder-ubuntu_0.10_amd64.deb'
         #    rm skype-call-recorder-ubuntu_0.10_amd64.deb
         #    sudo apt -y -f install
+        elif [[ "$(text_in_lower_case "${current_program}")" == "syncthing" ]]; then
+            sudo apt install curl apt-transport-https
+            curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+            echo "deb https://apt.syncthing.net/ syncthing release" | sudo tee /etc/apt/sources.list.d/syncthing.list
+            sudo apt update
+            sudo apt -y install syncthing
         elif [[ "$(text_in_lower_case "${current_program}")" == "teamviewer" ]]; then
             wget http://www.teamviewer.com/download/teamviewer_linux.deb
             sudo apt -y install gdebi
@@ -445,6 +452,8 @@ text="starting initial script interactions"
 #pp; note "${text}"
 echo_pause "${text}"
 ################################################################################
+# security
+pp; echo "disable Zeitgeist (using Activity Log Manager for example) and other logging as desired"
 # terminal style
 pp; echo "set up terminal style"
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
@@ -547,6 +556,10 @@ fi
 # Nextcloud
 if [ ${Nextcloud} -eq 1 ]; then
 pp; instate nextcloud
+fi
+# Syncthing
+if [ ${Syncthing} -eq 1 ]; then
+pp; instate syncthing
 fi
 
 # science and mathematics
