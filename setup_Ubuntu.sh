@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-03-03T1724Z"
+version="2022-03-07T1640Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -74,7 +74,7 @@ Mathics=1                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
 configure_browsers=1              # configure browsers
 PPELX=0                           # PPELX Wi-Fi setup
-switch_libinput_to_synaptics=0    # switch libinput to Synaptics
+switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04)
 remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
 make_public_user_account=1        # make a public user account
 LXDE=1                            # install LXDE desktop environment
@@ -363,7 +363,7 @@ for current_program in "${@}"; do
         #    rm skype-call-recorder-ubuntu_0.10_amd64.deb
         #    sudo apt -y -f install
         elif [[ "$(text_in_lower_case "${current_program}")" == "syncthing" ]]; then
-            sudo apt install curl apt-transport-https
+            sudo apt -y install curl apt-transport-https
             curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
             echo "deb https://apt.syncthing.net/ syncthing release" | sudo tee /etc/apt/sources.list.d/syncthing.list
             sudo apt update
@@ -453,7 +453,7 @@ text="starting initial script interactions"
 echo_pause "${text}"
 ################################################################################
 # security
-pp; echo "disable Zeitgeist (using Activity Log Manager for example) and other logging as desired"
+pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other logging as desired."
 # terminal style
 pp; echo "set up terminal style"
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
@@ -481,8 +481,10 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 instate pulseaudio-utils
 echo_pause "Set sound settings as required (allow loud volume etc.)"
 echo_pause "Set power settings as necessary."
-echo_pause "Set display settings as necessary. Turn off sticky edges."
+echo_pause "Set display settings as necessary, such as preventing dimming. Turn off sticky edges."
 # root privileges for programs
+echo
+echo -e "The file /etc/sudoers is about to be editable. When it is editable is an opportunity to customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
 echo -e "Set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
 #Defaults        timestamp_timeout=60
 IFS= read -d '' text << "EOF"
@@ -496,7 +498,6 @@ IFS= read -d '' text << "EOF"
 EOF
 echo "${text}"
 echo
-echo -e "This is also an opportunity to customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
 echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
 sudo visudo
 # AirVPN
@@ -715,6 +716,7 @@ sudo pip install yt-dlp
 pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate fswebcam
+pp; instate guvcview
 pp; instate hollywood
 # sound
 # Audio Recorder
@@ -728,7 +730,7 @@ pp; instate hydrogen
 pp; instate nuclear
 # Popcorn Time
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
-tar -xvf ~/Popcorn_Time.tar.gz --directory="${HOME}"
+tar -xf ~/Popcorn_Time.tar.gz --directory="${HOME}"
 rm Popcorn_Time.tar.gz
 # images
 pp; instate gimp
@@ -743,13 +745,13 @@ pp; note "install gallery download program gallery-dl"
 sudo pip install chardet
 sudo pip install gallery-dl
 # gcolor2
-pp; instate gcolor2
+pp; instate gcolor2 # unavailable recently, kept in script for backwards-compatibility
 wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcolor2/gcolor2_0.4-2.1ubuntu1_amd64.deb
-sudo apt-get install gcolor2_0.4-2.1ubuntu1_amd64.deb
+sudo dpkg -i gcolor2_0.4-2.1ubuntu1_amd64.deb
 rm gcolor2_0.4-2.1ubuntu1_amd64.deb
 # Luminance HDR
 ## Luminance HDR (16.04 LTS)
-pp; instate qtpfsgui
+pp; instate qtpfsgui # kept in script for backwards-compatibility
 ## Luminance HDR (18.04 LTS)
 pp; instate luminance-hdr
 # sounds
@@ -768,7 +770,7 @@ pp; instate atool
 pp; instate caca-utils
 pp; instate curl
 pp; instate dosbox
-pp; instate dtrx
+pp; instate dtrx # unavailable recently, kept in script for backwards-compatibility and for future-compatibility
 pp; instate elinks
 pp; instate exiftool
 pp; instate gdmap
@@ -776,7 +778,7 @@ pp; instate gnome-tweak-tool
 pp; instate gparted
 pp; instate graphviz
 pp; instate highlight
-pp; instate libmtpserver-dev mtp-server
+pp; instate libmtpserver-dev mtp-server # unavailable recently, kept in script for backwards-compatibility
 pp; instate mediainfo
 pp; instate orpie
 pp; instate pdfmod
@@ -945,6 +947,9 @@ if [ ${Unity} -eq 1 ]; then
 pp; note "Install the Unity7 desktop environment. Switch to lightdm."
 instate ubuntu-unity-desktop
 fi
+pp; note "Install GNOME Shell extensions capabilities and WinTile."
+sudo apt -y install gnome-tweaks gnome-shell-extensions chrome-gnome-shell
+firefox https://addons.mozilla.org/en-GB/firefox/addon/gnome-shell-integration https://extensions.gnome.org/extension/1723/wintile-windows-10-window-tiling-for-gnome # https://github.com/fmstrat/wintile
 
 ################################################################################
 #                                                                              #
@@ -1115,8 +1120,9 @@ sudo apt -y autoremove
 pp; note "concluding remarks"
 ################################################################################
 
-pp; echo -e "Enable terminal output on boot."
-echo -e "Do this by executing 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
+pp; echo -e "Using the following instructions, enable terminal output on boot, after which there will be an update to GRUB."
+echo_pause "Do this by executing (in another terminal) 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
+sudo update-grub
 echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 reload_options
 
