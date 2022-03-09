@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-03-07T1640Z"
+version="2022-03-09T0914Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -286,12 +286,21 @@ for current_program in "${@}"; do
             ./jitsi-meet-x86_64.AppImage
         elif [[ "$(text_in_lower_case "${current_program}")" == "mathics" ]]; then
             git clone https://github.com/poeschko/Mathics.git
-            cd Mathics/
+            cd Mathics
             sudo pip3 install pint
             sudo python3 setup.py install
             sudo python3 setup.py initialize
             cd ../
-            sudo rm -rf Mathics/
+            sudo rm -rf Mathics
+        elif [[ "$(text_in_lower_case "${current_program}")" == "neo" ]]; then
+            sudo apt -y install build-essential libncurses-dev
+            git clone https://github.com/st3w/neo.git
+            cd neo
+            ./autogen.sh
+            ./configure
+            make -j5
+            sudo make install
+            rm -rf neo
         elif [[ "$(text_in_lower_case "${current_program}")" == "nextcloud" ]]; then
             sudo add-apt-repository -y ppa:nextcloud-devs/client
             sudo apt update
@@ -717,6 +726,7 @@ pp; instate simplescreenrecorder
 pp; instate cheese
 pp; instate fswebcam
 pp; instate guvcview
+pp; instate neo
 pp; instate hollywood
 # sound
 # Audio Recorder
