@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-03-09T0914Z"
+version="2022-04-26T1744Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -463,6 +463,7 @@ echo_pause "${text}"
 ################################################################################
 # security
 pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other logging as desired."
+pp; instate macchanger
 # terminal style
 pp; echo "set up terminal style"
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
@@ -510,10 +511,14 @@ echo
 echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
 sudo visudo
 # AirVPN
+if [ ${AirVPN} -eq 1 ]; then
+echo_pause "Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy, changing auth_admin to yes."
+sudo nano /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 pp; echo "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
 sudo gpasswd -a "${USER}" airvpn
+fi
 # OpenVPN
 pp; echo "create openvpn group"
 sudo groupadd openvpn
@@ -797,6 +802,7 @@ pp; sudo snap install pdftk
 pp; instate pdftotext
 pp; instate ranger
 pp; instate realpath
+pp; instate sqlitebrowser
 pp; instate tkcvs
 pp; instate transmission-cli
 pp; instate unetbootin
@@ -947,6 +953,7 @@ if [ ${LXDE} -eq 1 ]; then
 pp; note "Install the LXDE desktop environment. Switch to lightdm."
 pp; instate lxde-common
 fi
+instate lxpanel
 reload_options
 if [ ${MATE} -eq 1 ]; then
 pp; note "Install the MATE desktop environment. Switch to lightdm."
@@ -1145,4 +1152,3 @@ pp
 ################################################################################
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::END:
-
