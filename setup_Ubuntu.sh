@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-04-26T1744Z"
+version="2022-04-27T0015Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -689,8 +689,9 @@ cd geany_config
 ./setup.sh
 cd ..
 rm -rf geany_config
-# Xournal
+# Xournal and Xournal++
 pp; instate xournal
+sudo snap install xournalpp
 # Calibre
 pp; instate calibre
 # LaTeX
