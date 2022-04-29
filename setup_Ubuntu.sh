@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-04-27T0015Z"
+version="2022-04-29T1648Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -63,20 +63,21 @@ This function ensures that appropriate configuration option variables exist.
 EOF
 
 AirVPN=1                          # VPN service
-NordVPN=1                         # VPN service
+NordVPN=0                         # VPN service
 Nextcloud=0                       # synchronisation of files, contacts, calendars etc.
-Syncthing=1                       # synchronisation of files, contacts, calendars etc.
+Syncthing=0                       # synchronisation of files, contacts, calendars etc.
 Dropbox=0                         # recommendation: no
 LaTeX=1                           # set up LaTeX infrastructure
 ROOT=0                            # install ROOT
-Sage=1                            # install Sage
-Mathics=1                         # install Mathics
+Sage=0                            # install Sage
+Mathics=0                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
-configure_browsers=1              # configure browsers
+PopcornTime=0                     # install Popcorn Time
+configure_browsers=0              # configure browsers
 PPELX=0                           # PPELX Wi-Fi setup
 switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04)
 remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
-make_public_user_account=1        # make a public user account
+make_public_user_account=0        # make a public user account
 LXDE=1                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
 Unity=0                           # install Unity7 desktop environment
@@ -228,11 +229,7 @@ for current_program in "${@}"; do
         #    sudo gdebi --non-interactive AdbeRdr9.5.5-1_i386linux_enu.deb
         #    sudo apt -y install libgtk2.0-0:i386 libnss3-1d:i386 libnspr4-0d:i386 lib32nss-mdns* libxml2:i386 libxslt1.1:i386 libstdc++6:i386
         #    rm AdbeRdr9.5.5-1_i386linux_enu.deb
-        if [[ "$(text_in_lower_case "${current_program}")" == "airvpn" ]]; then
-            wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
-            sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
-            sudo apt -y install eddie-ui
-        elif [[ "$(text_in_lower_case "${current_program}")" == "bitcoin" ]]; then
+        if [[ "$(text_in_lower_case "${current_program}")" == "bitcoin" ]]; then
             sudo add-apt-repository -y ppa:bitcoin/bitcoin
             sudo apt update
             sudo apt -y install bitcoin-qt
@@ -382,14 +379,6 @@ for current_program in "${@}"; do
             sudo apt -y install gdebi
             sudo gdebi -n teamviewer_linux.deb
             rm teamviewer_linux.deb
-        elif [[ "$(text_in_lower_case "${current_program}")" == "veracrypt" ]]; then
-            mkdir veracrypt
-            cd veracrypt
-            wget https://launchpadlibrarian.net/289850375/veracrypt-1.19-setup.tar.bz2
-            tar -xvf veracrypt-1.19-setup.tar.bz2
-            sudo ./veracrypt-1.19-setup-gui-x64
-            cd ..
-            rm -rf veracrypt
         elif [[ "$(text_in_lower_case "${current_program}")" == "vidyo" ]]; then
             sudo apt -y install libqt4-gui
             #wget http://information-technology.web.cern.ch/sites/information-technology.web.cern.ch/files/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb
@@ -428,14 +417,6 @@ for current_program in "${@}"; do
         #sudo apt -y autoremove
     fi
 done
-}
-
-pip23(){
-    # pip2 and pip3 install
-    programs="${@}"
-    echo "using pip2 and pip3, install or upgrade "${programs}""
-    sudo pip install "${programs}" --upgrade
-    sudo pip3 install "${programs}" --upgrade
 }
 
 # install prerequisites
@@ -510,6 +491,11 @@ echo "${text}"
 echo
 echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
 sudo visudo
+# OpenVPN
+pp; echo "create openvpn group"
+sudo groupadd openvpn
+sudo gpasswd -a "${USER}" openvpn
+echo "add current user ("${USER}") to the group openvpn"
 # AirVPN
 if [ ${AirVPN} -eq 1 ]; then
 echo_pause "Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy, changing auth_admin to yes."
@@ -518,17 +504,23 @@ pp; echo "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
 sudo gpasswd -a "${USER}" airvpn
+# upcoming: apt-key deprecated:
+wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
+sudo apt -y install eddie-ui
 fi
-# OpenVPN
-pp; echo "create openvpn group"
-sudo groupadd openvpn
-sudo gpasswd -a "${USER}" openvpn
-echo "add current user ("${USER}") to the group openvpn"
 # VeraCrypt
 pp; echo "create veracrypt group"
 sudo groupadd veracrypt
 echo "add current user ("${USER}") to the group VeraCrypt"
 sudo gpasswd -a "${USER}" veracrypt
+mkdir veracrypt
+cd veracrypt
+wget https://launchpadlibrarian.net/289850375/veracrypt-1.19-setup.tar.bz2
+tar -xvf veracrypt-1.19-setup.tar.bz2
+sudo ./veracrypt-1.19-setup-gui-x64
+cd ..
+rm -rf veracrypt
 # coding
 pp; instate build-essential checkinstall git
 #pp; note "install GCC 4.9";
@@ -544,9 +536,6 @@ sudo dpkg-reconfigure unattended-upgrades
 pp; instate veracrypt
 # communications
 reload_options
-if [ ${AirVPN} -eq 1 ]; then
-pp; instate AirVPN
-fi
 # AppImageLauncher
 pp; echo "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
 sudo add-apt-repository -y ppa:appimagelauncher-team/stable
@@ -680,7 +669,7 @@ sudo python get-pip.py
 sudo python3 get-pip.py
 rm get-pip.py
 # Pandoc
-pip23 install pypandoc
+pip install pypandoc
 # Geany
 pp; instate geany
 pp; note "configure Geany";
@@ -698,20 +687,21 @@ pp; instate calibre
 reload_options
 if [ ${LaTeX} -eq 1 ]; then
 pp; note "install LaTeX"
-instate pdflatex                 \
-        texlive-full             \
-        texlive-latex-extra      \
-        texlive-fonts-recommended\
-        texlive-fonts-extra      \
-        texlive-metapost         \
-        texworks                 \
-        texinfo                  \
-        texi2html
+instate pdflatex # upcoming: fix
+instate texlive-full
+instate texlive-latex-extra
+instate texlive-fonts-recommended
+instate texlive-fonts-extra
+instate texlive-metapost
+instate texworks
+instate texinfo
+instate texi2html
 fi
 # video
 pp; instate vlc
 pp; note "install vlc-plugin-fluidsynth (to set up VLC to play MIDI files) and ability to decode HEVC/H.265"
-pp; instate vlc-plugin-fluidsynth vlc-plugin-libde265
+pp; instate vlc-plugin-fluidsynth
+pp; instate vlc-plugin-libde265 # upcoming: fix
 git clone https://github.com/wdbm/vlcrc.git
 cd vlcrc
 ./setup.sh
@@ -719,16 +709,14 @@ cd ..
 rm -rf vlcrc
 pp; note "remove Totem"
 sudo apt -y remove totem
-pp; instate openshot
+pp; instate openshot # upcoming: fix: AppImage?
 pp; instate ffmpeg
 #pp; instate gnash
 # LightSpark Flash player
-pp; note "install youtube-dl"
-sudo pip install youtube_dl
 pp; note "install yt-dlp"
 sudo pip install yt-dlp
 #pp; instate youtube-dlg
-pp; instate simplescreenrecorder
+pp; instate simplescreenrecorder # upcoming: "E: The repository 'https://ppa.launchpadcontent.net/maarten-baert/simplescreenrecorder/ubuntu jammy Release' does not have a Release file."
 pp; instate cheese
 pp; instate fswebcam
 pp; instate guvcview
@@ -745,15 +733,17 @@ pp; instate audacious
 pp; instate hydrogen
 pp; instate nuclear
 # Popcorn Time
+if [ ${PopcornTime} -eq 1 ]; then
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
 tar -xf ~/Popcorn_Time.tar.gz --directory="${HOME}"
 rm Popcorn_Time.tar.gz
+fi
 # images
 pp; instate gimp
 pp; instate gimp-plugin-registry
 pp; instate imagemagick
 pp; instate webp
-pp; instate hugin
+pp; instate hugin # upcoming: fix? or kept in script for backwards-compatibility
 pp; instate inkscape
 pp; note "install Instagram download program Instaloader"
 sudo pip install instaloader
@@ -790,7 +780,8 @@ pp; instate dtrx # unavailable recently, kept in script for backwards-compatibil
 pp; instate elinks
 pp; instate exiftool
 pp; instate gdmap
-pp; instate gnome-tweak-tool
+pp; instate gnome-tweak-tool # kept in script for backwards-compatibility
+pp; instate gnome-tweaks
 pp; instate gparted
 pp; instate graphviz
 pp; instate highlight
@@ -806,7 +797,6 @@ pp; instate realpath
 pp; instate sqlitebrowser
 pp; instate tkcvs
 pp; instate transmission-cli
-pp; instate unetbootin
 pp; instate unity-tweak-tool
 pp; instate unrar-free
 pp; instate vpnc
@@ -822,9 +812,7 @@ sudo pip install\
     matplotlib     \
     media_editing  \
     numpy          \
-    nvtop          \
     pandas         \
-    pyprel         \
     pyprel         \
     python-dateutil\
     r245           \
@@ -849,13 +837,13 @@ sudo apt update
 sudo apt install nordvpn
 fi
 # science and mathematics
-sudo snap install mathpix-snipping-tool
+#sudo snap install mathpix-snipping-tool
 reload_options
 if [ ${Mathics} -eq 1 ]; then
     instate mathics
 fi
 # Nautilus
-pp; instate nautilus-wallpaper-changer
+pp; instate nautilus-wallpaper-changer # kept in script for backwards-compatibility
 reload_options
 # tmux (~/.tmux.conf)
 pp; note "set up tmux"
@@ -1039,12 +1027,12 @@ rm setup.sh
 #                                                                              #
 ################################################################################
 
-pp; note "Set some keyboard shortcuts."
+pp; note "Set some keyboard shortcuts\n."
 
 # shortkey: type datetime
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
-note "Ctrl+Shift+d"
+note "\nCtrl+Shift+d"
 IFS= read -d '' text << "EOF"
 bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
 EOF
@@ -1057,7 +1045,7 @@ echo_pause "xtrlock"
 # shortkey: volume up
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # pactl set-sink-volume @DEFAULT_SINK@ +5%
-note "volume up key"
+note "\nvolume up key"
 IFS= read -d '' text << "EOF"
 pactl set-sink-volume @DEFAULT_SINK@ +5%
 EOF
