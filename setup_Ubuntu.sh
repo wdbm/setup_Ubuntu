@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-04-29T1648Z"
+version="2022-05-02T1910Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -63,7 +63,7 @@ This function ensures that appropriate configuration option variables exist.
 EOF
 
 AirVPN=1                          # VPN service
-NordVPN=0                         # VPN service
+NordVPN=1                         # VPN service
 Nextcloud=0                       # synchronisation of files, contacts, calendars etc.
 Syncthing=0                       # synchronisation of files, contacts, calendars etc.
 Dropbox=0                         # recommendation: no
@@ -103,7 +103,7 @@ EOF
 text="${*}"
 echo "${text}" | festival --tts &
 read -s -n 1 -p "${text}"
-echo ""
+echo
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -262,7 +262,7 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "dropbox" ]]; then
             sudo apt -y install python-gtk2
             wget https://linux.dropbox.com/packages/ubuntu/dropbox_2.10.0_amd64.deb
-            sudo dpkg -i dropbox_2.10.0_amd64.deb
+            sudo apt -y install ./dropbox_2.10.0_amd64.deb
             rm dropbox_2.10.0_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "gimp-plugin-registry" ]]; then
             sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
@@ -271,11 +271,11 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "google-chrome" ]]; then
             sudo apt -y install libappindicator1
             wget https://dl.google.com/linux/direct/google-chrome<-stable_current_amd64.deb
-            sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i google-chrome-stable_current_amd64.deb'
+            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./google-chrome-stable_current_amd64.deb'
             rm google-chrome-stable_current_amd64.deb
         #elif [[ "$(text_in_lower_case "${current_program}")" == "google-earth" ]]; then
         #    sudo apt -y install libc6:i386 lsb-core
-        #    sudo dpkg -i google-earth-stable_7.1.2.2041_amd64.deb
+        #    sudo apt -y install ./google-earth-stable_7.1.2.2041_amd64.deb
         #    rm google-earth-stable_7.1.2.2041_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "jitsi" ]]; then
             wget https://github.com/jitsi/jitsi-meet-electron/releases/download/v2022.1.1/jitsi-meet-x86_64.AppImage
@@ -304,13 +304,13 @@ for current_program in "${@}"; do
             sudo apt -y install nextcloud-client
         elif [[ "$(text_in_lower_case "${current_program}")" == "nordvpn" ]]; then
             wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
-            sudo apt install nordvpn-release_1.0.0_all.deb
+            sudo apt -y install ./nordvpn-release_1.0.0_all.deb
             rm nordvpn-release_1.0.0_all.deb
             sudo apt update
             sudo apt install nordvpn
         elif [[ "$(text_in_lower_case "${current_program}")" == "nuclear" ]]; then
             wget https://github.com/nukeop/nuclear/releases/download/v0.6.3/nuclear-fca030.deb
-            sudo dpkg -i nuclear-fca030.deb
+            sudo apt -y install ./nuclear-fca030.deb
             rm nuclear-fca030.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "playonlinux" ]]; then
             wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
@@ -365,7 +365,7 @@ for current_program in "${@}"; do
         #    sudo apt -y install libid3-tools
         #    sudo apt -y install libid3-3.8.3v5
         #    wget http://atdot.ch/scr/files/0.10/skype-call-recorder-ubuntu_0.10_amd64.deb
-        #    sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i skype-call-recorder-ubuntu_0.10_amd64.deb'
+        #    sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./skype-call-recorder-ubuntu_0.10_amd64.deb'
         #    rm skype-call-recorder-ubuntu_0.10_amd64.deb
         #    sudo apt -y -f install
         elif [[ "$(text_in_lower_case "${current_program}")" == "syncthing" ]]; then
@@ -382,19 +382,19 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "vidyo" ]]; then
             sudo apt -y install libqt4-gui
             #wget http://information-technology.web.cern.ch/sites/information-technology.web.cern.ch/files/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb
-            #sudo dpkg -i VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb
-            #sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb'
+            #sudo apt -y install ./VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb
+            #sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb'
             #rm VidyoDesktopInstaller-ubuntu64-TAG_VD_3_0_0_141.deb
             #wget http://information-technology.web.cern.ch/sites/information-technology.web.cern.ch/files/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017.deb
             wget --content-disposition https://www.dropbox.com/s/4ag4hm5enma3qgv/VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017-no_libqt4-gui.deb?dl=0
-            sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017-no_libqt4-gui.deb'
+            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017-no_libqt4-gui.deb'
             rm VidyoDesktopInstaller-ubuntu64-TAG_VD_3_6_3_017-no_libqt4-gui.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "virtualbox" ]]; then
             #wget http://dlc.sun.com.edgesuite.net/virtualbox/4.3.10/virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb
-            #sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb'
+            #sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb'
             #rm virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb
             wget https://download.virtualbox.org/virtualbox/6.0.8/virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
-            sudo su -c 'DEBIAN_FRONTEND=noninteractive dpkg -i virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb'
+            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb'
             rm virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "youtube-dlg" ]]; then
             sudo add-apt-repository -y ppa:nilarimogard/webupd8
@@ -476,6 +476,7 @@ echo_pause "Set display settings as necessary, such as preventing dimming. Turn 
 # root privileges for programs
 echo
 echo -e "The file /etc/sudoers is about to be editable. When it is editable is an opportunity to customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
+echo
 echo -e "Set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
 #Defaults        timestamp_timeout=60
 IFS= read -d '' text << "EOF"
@@ -498,8 +499,6 @@ sudo gpasswd -a "${USER}" openvpn
 echo "add current user ("${USER}") to the group openvpn"
 # AirVPN
 if [ ${AirVPN} -eq 1 ]; then
-echo_pause "Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy, changing auth_admin to yes."
-sudo nano /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 pp; echo "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
@@ -508,6 +507,8 @@ sudo gpasswd -a "${USER}" airvpn
 wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
 sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
 sudo apt -y install eddie-ui
+echo_pause "Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy, changing auth_admin to yes."
+sudo nano /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 fi
 # VeraCrypt
 pp; echo "create veracrypt group"
@@ -726,7 +727,7 @@ pp; instate hollywood
 # Audio Recorder
 pp; echo "instate Audio Recorder"
 wget https://raw.githubusercontent.com/wdbm/media_editing/master/setup/audio-recorder/audio-recorder_1.7-5%7Exenial_amd64.deb
-sudo dpkg -i audio-recorder_1.7-5~xenial_amd64.deb
+sudo apt -y install ./audio-recorder_1.7-5~xenial_amd64.deb
 rm audio-recorder_1.7-5~xenial_amd64.deb
 # music
 pp; instate audacious
@@ -753,7 +754,7 @@ sudo pip install gallery-dl
 # gcolor2
 pp; instate gcolor2 # unavailable recently, kept in script for backwards-compatibility
 wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcolor2/gcolor2_0.4-2.1ubuntu1_amd64.deb
-sudo dpkg -i gcolor2_0.4-2.1ubuntu1_amd64.deb
+sudo apt -y install ./gcolor2_0.4-2.1ubuntu1_amd64.deb
 rm gcolor2_0.4-2.1ubuntu1_amd64.deb
 # Luminance HDR
 ## Luminance HDR (16.04 LTS)
@@ -831,7 +832,7 @@ pp; instate signal
 reload_options
 if [ ${NordVPN} -eq 1 ]; then
 wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
-sudo apt install nordvpn-release_1.0.0_all.deb
+sudo apt -y install ./nordvpn-release_1.0.0_all.deb
 rm nordvpn-release_1.0.0_all.deb
 sudo apt update
 sudo apt install nordvpn
@@ -893,15 +894,13 @@ pp; note "${text}"
 echo "${text}" | festival --tts &
 ################################################################################
 
-# configure browsers
-reload_options
-if [ ${configure_browsers} -eq 1 ]; then
-pp; note "configure browsers"
-git clone https://github.com/wdbm/browsers_config.git
-cd browsers_config
-./setup.sh
-cd ..
-rm -rf browsers_config
+# libinput, synaptics
+if [ ${switch_libinput_to_synaptics} -eq 1 ]; then
+pp; note "Install Synaptics and uninstall libinput."
+sudo apt -y install xserver-xorg-input-synaptics-hwe-18.04
+sudo apt -y install xserver-xorg-input-evdev-hwe-18.04
+sudo apt -y remove xserver-xorg-input-libinput
+sudo apt -y remove xserver-xorg-input-libinput-hwe-18.04
 fi
 # Wine
 ## Wine (16.04 LTS)
@@ -913,13 +912,23 @@ reload_options
 if [ ${VirtualBox} -eq 1 ]; then
 pp; instate virtualbox
 fi
+# configure browsers
+reload_options
+if [ ${configure_browsers} -eq 1 ]; then
+pp; note "configure browsers"
+git clone https://github.com/wdbm/browsers_config.git
+cd browsers_config
+./setup.sh
+cd ..
+rm -rf browsers_config
+fi
 # default open applications
 pp; note "set default applications"
 echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
 # mlocate
 #pp; note "set up mlocate"
-echo_pause "Prevent /media from being pruned by mlocate."
-sudo nano /etc/updatedb.conf
+#echo_pause "Prevent /media from being pruned by mlocate."
+#sudo nano /etc/updatedb.conf
 # users
 pp; note "Make user private."
 sudo chmod 750 /home/"${USER}"
@@ -928,30 +937,22 @@ if [ ${make_public_user_account} -eq 1 ]; then
 pp; note "Create public user account, setting passcode to \"public\", full name to \"public\" and everything else to blank."
 sudo adduser public
 fi
-# libinput, synaptics
-if [ ${switch_libinput_to_synaptics} -eq 1 ]; then
-pp; note "Install Synaptics and uninstall libinput."
-sudo apt install xserver-xorg-input-synaptics-hwe-18.04
-sudo apt install xserver-xorg-input-evdev-hwe-18.04
-sudo apt remove xserver-xorg-input-libinput
-sudo apt remove xserver-xorg-input-libinput-hwe-18.04
-fi
 # desktop environments
 reload_options
 if [ ${LXDE} -eq 1 ]; then
 pp; note "Install the LXDE desktop environment. Switch to lightdm."
-pp; instate lxde-common
+sudo DEBIAN_FRONTEND=noninteractive apt -y install  lxde-common
 fi
 instate lxpanel
 reload_options
 if [ ${MATE} -eq 1 ]; then
 pp; note "Install the MATE desktop environment. Switch to lightdm."
-instate ubuntu-mate-desktop
+sudo DEBIAN_FRONTEND=noninteractive apt -y install  ubuntu-mate-desktop
 fi
 reload_options
 if [ ${Unity} -eq 1 ]; then
 pp; note "Install the Unity7 desktop environment. Switch to lightdm."
-instate ubuntu-unity-desktop
+sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-unity-desktop
 fi
 pp; note "Install GNOME Shell extensions capabilities and WinTile."
 sudo apt -y install gnome-tweaks gnome-shell-extensions chrome-gnome-shell
@@ -1027,12 +1028,13 @@ rm setup.sh
 #                                                                              #
 ################################################################################
 
-pp; note "Set some keyboard shortcuts\n."
+pp; note "Set some keyboard shortcuts."
 
 # shortkey: type datetime
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
-note "\nCtrl+Shift+d"
+echo
+note "Ctrl+Shift+d"
 IFS= read -d '' text << "EOF"
 bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
 EOF
@@ -1045,7 +1047,8 @@ echo_pause "xtrlock"
 # shortkey: volume up
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # pactl set-sink-volume @DEFAULT_SINK@ +5%
-note "\nvolume up key"
+echo
+note "volume up key"
 IFS= read -d '' text << "EOF"
 pactl set-sink-volume @DEFAULT_SINK@ +5%
 EOF
@@ -1098,8 +1101,9 @@ nohup indicator-sysmonitor &
 IFS= read -d '' text << "EOF"
 |{net}    |{publiccountryiso}|cpu:{cpu}/{cputemp}|m/fs:{mem}/{fs///}|
 EOF
-echo_pause "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate."
-echo -e "The following is an example:\n\n"${text}"\n\n"
+echo "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate. The following is an example:"
+echo
+echo_pause "${text}"
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
