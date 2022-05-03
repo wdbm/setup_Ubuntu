@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-03T0318Z"
+version="2022-05-03T0330Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -72,6 +72,7 @@ ROOT=0                            # install ROOT
 Sage=0                            # install Sage
 Mathics=0                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
+GPU=0                             # install GPU utilities
 PopcornTime=0                     # install Popcorn Time
 configure_browsers=0              # configure browsers
 PPELX=0                           # PPELX Wi-Fi setup
@@ -887,6 +888,14 @@ IFS= read -d '' text << "EOF"
 exit 0
 EOF
 echo "${text}" | sudo tee /lib/systemd/system-sleep/restartmouse
+# GPU
+if [ ${GPU} -eq 1 ]; then
+git clone https://github.com/Syllo/nvtop.git
+mkdir -p nvtop/build && cd nvtop/build
+cmake ..
+make
+sudo make install
+fi
 
 ################################################################################
 pp
