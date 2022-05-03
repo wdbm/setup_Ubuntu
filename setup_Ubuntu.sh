@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-02T1910Z"
+version="2022-05-03T0318Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -669,8 +669,7 @@ wget -N https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
 sudo python3 get-pip.py
 rm get-pip.py
-# Pandoc
-pip install pypandoc
+sudo pip install pypandoc
 # Geany
 pp; instate geany
 pp; note "configure Geany";
@@ -806,25 +805,27 @@ pp; instate xcalib
 pp; instate xtrlock
 pp; instate xvkbd
 # Python
-sudo pip install\
-    bochica        \
-    che_guevara_otp\
-    hualang        \
-    matplotlib     \
-    media_editing  \
-    numpy          \
-    pandas         \
-    pyprel         \
-    python-dateutil\
-    r245           \
-    scalar         \
-    seaborn        \
-    shijian        \
-    slugifygui     \
-    spin           \
-    technicolor    \
-    tmux_control   \
+sudo pip install        \
+    six                 \
+    bochica             \
+    che_guevara_otp     \
+    hualang             \
+    matplotlib          \
+    media_editing       \
+    numpy               \
+    pandas              \
+    pyprel              \
+    python-dateutil     \
+    r245                \
+    scalar              \
+    seaborn             \
+    shijian             \
+    slugifygui          \
+    spin                \
+    technicolor         \
+    tmux_control        \
     william_blake_crypto
+sudo pip install s-tui --ignore-installed psutil
 reload_options
 # communications
 #pp; instate riot-web
