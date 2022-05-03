@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-03T0330Z"
+version="2022-05-03T0331Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -699,6 +699,7 @@ instate texinfo
 instate texi2html
 fi
 # video
+pp; instate mpv
 pp; instate vlc
 pp; note "install vlc-plugin-fluidsynth (to set up VLC to play MIDI files) and ability to decode HEVC/H.265"
 pp; instate vlc-plugin-fluidsynth
