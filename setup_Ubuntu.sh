@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-03T0331Z"
+version="2022-05-17T0035Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -438,8 +438,8 @@ echo_pause "Press any key to start."
 ################################################################################
 pp; note "set up operating system"
 note "time: "$(date "+%A %d %B %H:%M:%S %Z %Y (%Y-%m-%dT%H%M%S)")""
-echo -e "\n\nHello! I am a script that tries my best to set up Ubuntu (preferably 16.04 LTS, but I think I can make a good try with 18.04 LTS). Make sure that you are very simply running me in a Bash terminal using your normal user account (not root) and that you are not trying to redirect my output to a file or something (I already keep a log, don't worry). Also make sure that you are using a sturdy, reliable internet connection. So, if you are at CERN, make sure you are using a wired connection, not the Wi-Fi. There are three main parts to my running. First I do some initial script interactions with you where I advise you to click things and so on and basically do manual things that I don't yet know how to do automatically. I tell you when these initial script interactions are complete. Then I run lots of things automatically. Then I finish up by asking you to do a few last things manually again. Note that I require an internet connection at all times and that I prefer to be run all at once, but if something breaks I will do my best to pick things up again if you restart me without screwing anything up. Before continuing, just make sure that the options that you want are set correctly in my function called \"reload_options\". It you turn up the volume on your computer I will try to speak out occasionally telling you what I am doing. Don't worry -- I won't talk too much. Thanks for trusting me and I hope you like the things I will try to do. :)"
-text="starting initial script interactions"
+echo -e "\nHello! I am a script that tries my best to set up Ubuntu (preferably 16.04 LTS, but I think I can make a good try with 18.04 LTS). Make sure that you are very simply running me in a Bash terminal using your normal user account (not root) and that you are not trying to redirect my output to a file or something (I already keep a log, don't worry). Also make sure that you are using a sturdy, reliable internet connection. So, if you are at CERN, make sure you are using a wired connection, not the Wi-Fi. There are three main parts to my running. First I do some initial script interactions with you where I advise you to click things and so on and basically do manual things that I don't yet know how to do automatically. I tell you when these initial script interactions are complete. Then I run lots of things automatically. Then I finish up by asking you to do a few last things manually again. Note that I require an internet connection at all times and that I prefer to be run all at once, but if something breaks I will do my best to pick things up again if you restart me without screwing anything up. Before continuing, just make sure that the options that you want are set correctly in my function called \"reload_options\". It you turn up the volume on your computer I will try to speak out occasionally telling you what I am doing. Don't worry -- I won't talk too much. Thanks for trusting me and I hope you like the things I will try to do. :)"
+text="starting initial script interactions\n"
 #pp; note "${text}"
 echo_pause "${text}"
 ################################################################################
@@ -823,7 +823,7 @@ sudo pip install        \
     seaborn             \
     shijian             \
     slugifygui          \
-    spin                \
+    python_spin         \
     technicolor         \
     tmux_control        \
     william_blake_crypto
@@ -951,18 +951,18 @@ fi
 # desktop environments
 reload_options
 if [ ${LXDE} -eq 1 ]; then
-pp; note "Install the LXDE desktop environment. Switch to lightdm."
-sudo DEBIAN_FRONTEND=noninteractive apt -y install  lxde-common
+pp; note "Install the LXDE desktop environment. If wanted, switch to lightdm."
+sudo DEBIAN_FRONTEND=noninteractive apt -y install lxde-common
 fi
 instate lxpanel
 reload_options
 if [ ${MATE} -eq 1 ]; then
-pp; note "Install the MATE desktop environment. Switch to lightdm."
-sudo DEBIAN_FRONTEND=noninteractive apt -y install  ubuntu-mate-desktop
+pp; note "Install the MATE desktop environment. If wanted, to lightdm."
+sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-mate-desktop
 fi
 reload_options
 if [ ${Unity} -eq 1 ]; then
-pp; note "Install the Unity7 desktop environment. Switch to lightdm."
+pp; note "Install the Unity7 desktop environment. If wanted, to lightdm."
 sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-unity-desktop
 fi
 pp; note "Install GNOME Shell extensions capabilities and WinTile."
