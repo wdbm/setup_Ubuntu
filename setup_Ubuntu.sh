@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-17T0035Z"
+version="2022-05-18T1723Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -74,14 +74,17 @@ Mathics=0                         # install Mathics
 VirtualBox=0                      # install VirtualBox VM software
 GPU=0                             # install GPU utilities
 PopcornTime=0                     # install Popcorn Time
+music_applications=0              # install music applications
 configure_browsers=0              # configure browsers
 PPELX=0                           # PPELX Wi-Fi setup
 switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04)
 remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
 make_public_user_account=0        # make a public user account
-LXDE=1                            # install LXDE desktop environment
+theme_Bash=1                      # theme Bash
+LXDE=0                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
 Unity=0                           # install Unity7 desktop environment
+Wine=1                            # install Wine
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -422,7 +425,7 @@ done
 
 # install prerequisites
 echo "install prerequisites"
-sudo apt update
+sudo apt -y update
 instate festival sox
 
 # Install updates and try to ensure that the installation environment is ok.
@@ -457,6 +460,8 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-color "#000000"
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ use-transparent-background true
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ background-transparency-percent "10"
+reload_options
+if [ ${theme_Bash} -eq 1 ]; then
 # install Powerline fonts
 pp; note "install fonts patched for Powerline (note: https://superuser.com/a/1336614/705613)"
 # install Powerline fonts for user
@@ -469,16 +474,17 @@ sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_for_Powerli
 sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_Bold_for_Powerline.ttf   https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Bold%20for%20Powerline.ttf
 sudo wget --content-disposition -N -O /usr/local/share/fonts/Monofur_Italic_for_Powerline.ttf https://raw.githubusercontent.com/powerline/fonts/master/Monofur/Monofur%20Italic%20for%20Powerline.ttf
 gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:${uuid_profile_default}/ font "monofur for Powerline bold 12"
+fi
 # sound, display, power
 instate pulseaudio-utils
-echo_pause "Set sound settings as required (allow loud volume etc.)"
-echo_pause "Set power settings as necessary."
-echo_pause "Set display settings as necessary, such as preventing dimming. Turn off sticky edges."
+echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
 # root privileges for programs
 echo
-echo -e "The file /etc/sudoers is about to be editable. When it is editable is an opportunity to customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
+echo -e "The file /etc/sudoers is about to be editable. When it is editable, customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
 echo
-echo -e "Set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
+echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
+sudo visudo
+echo -e "The file /etc/sudoers is about to be editable. When it is editable, set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
 #Defaults        timestamp_timeout=60
 IFS= read -d '' text << "EOF"
 # Allow users of the group airvpn to run AirVPN as root.
@@ -499,6 +505,7 @@ sudo groupadd openvpn
 sudo gpasswd -a "${USER}" openvpn
 echo "add current user ("${USER}") to the group openvpn"
 # AirVPN
+reload_options
 if [ ${AirVPN} -eq 1 ]; then
 pp; echo "create airvpn group"
 sudo groupadd airvpn
@@ -527,7 +534,7 @@ rm -rf veracrypt
 pp; instate build-essential checkinstall git
 #pp; note "install GCC 4.9";
 #sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-#sudo apt update
+#sudo apt -y update
 #instate gcc-4.9
 pp; echo "install fonts etc."
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
@@ -535,13 +542,12 @@ instate ubuntu-restricted-extras
 # security
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
-pp; instate veracrypt
 # communications
 reload_options
 # AppImageLauncher
 pp; echo "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
 sudo add-apt-repository -y ppa:appimagelauncher-team/stable
-sudo apt update
+sudo apt -y update
 sudo apt -y install appimagelauncher
 pp; instate jitsi
 
@@ -560,20 +566,20 @@ if [ ${Dropbox} -eq 1 ]; then
 pp; instate dropbox
 fi
 # Nextcloud
+reload_options
 if [ ${Nextcloud} -eq 1 ]; then
 pp; instate nextcloud
 fi
 # Syncthing
+reload_options
 if [ ${Syncthing} -eq 1 ]; then
 pp; instate syncthing
 fi
-
 # science and mathematics
 reload_options
 if [ ${Sage} -eq 1 ]; then
     instate sage #sagemath
 fi
-
 # drivers
 instate dkms
 # security
@@ -657,7 +663,7 @@ pp; instate sox
 pp; instate tree
 # Python
 sudo add-apt-repository -y ppa:deadsnakes/ppa
-sudo apt update
+sudo apt -y update
 pp; instate python-dev
 pp; instate python-tk
 pp; instate python3-dev
@@ -680,7 +686,7 @@ cd geany_config
 cd ..
 rm -rf geany_config
 # Xournal and Xournal++
-pp; instate xournal
+#pp; instate xournal
 sudo snap install xournalpp
 # Calibre
 pp; instate calibre
@@ -722,7 +728,7 @@ pp; instate simplescreenrecorder # upcoming: "E: The repository 'https://ppa.lau
 pp; instate cheese
 pp; instate fswebcam
 pp; instate guvcview
-pp; instate neo
+#pp; instate neo
 pp; instate hollywood
 # sound
 # Audio Recorder
@@ -732,9 +738,13 @@ sudo apt -y install ./audio-recorder_1.7-5~xenial_amd64.deb
 rm audio-recorder_1.7-5~xenial_amd64.deb
 # music
 pp; instate audacious
+reload_options
+if [ ${music_applications} -eq 1 ]; then
 pp; instate hydrogen
 pp; instate nuclear
+fi
 # Popcorn Time
+reload_options
 if [ ${PopcornTime} -eq 1 ]; then
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
 tar -xf ~/Popcorn_Time.tar.gz --directory="${HOME}"
@@ -747,8 +757,8 @@ pp; instate imagemagick
 pp; instate webp
 pp; instate hugin # upcoming: fix? or kept in script for backwards-compatibility
 pp; instate inkscape
-pp; note "install Instagram download program Instaloader"
-sudo pip install instaloader
+#pp; note "install Instagram download program Instaloader"
+#sudo pip install instaloader
 pp; note "install gallery download program gallery-dl"
 sudo pip install chardet
 sudo pip install gallery-dl
@@ -837,8 +847,8 @@ if [ ${NordVPN} -eq 1 ]; then
 wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
 sudo apt -y install ./nordvpn-release_1.0.0_all.deb
 rm nordvpn-release_1.0.0_all.deb
-sudo apt update
-sudo apt install nordvpn
+sudo apt -y update
+sudo apt -y install nordvpn
 fi
 # science and mathematics
 #sudo snap install mathpix-snipping-tool
@@ -847,7 +857,7 @@ if [ ${Mathics} -eq 1 ]; then
     instate mathics
 fi
 # Nautilus
-pp; instate nautilus-wallpaper-changer # kept in script for backwards-compatibility
+#pp; instate nautilus-wallpaper-changer # kept in script for backwards-compatibility
 reload_options
 # tmux (~/.tmux.conf)
 pp; note "set up tmux"
@@ -863,8 +873,8 @@ if [ ${PPELX} -eq 1 ]; then
 #EOF
 #echo "${text}" | sudo tee -a /etc/cups/client.conf
 #sudo service cups restart
-pp; note "install Glasgow PPE WiFi -- suck_lord_kelvin_cock"
-sudo pip install slokc
+#pp; note "install Glasgow PPE WiFi -- suck_lord_kelvin_cock"
+#sudo pip install slokc
 fi
 # hibernation
 pp; note "set up hibernation";
@@ -897,15 +907,8 @@ cmake ..
 make
 sudo make install
 fi
-
-################################################################################
-pp
-text="start final script interactions"
-pp; note "${text}"
-echo "${text}" | festival --tts &
-################################################################################
-
 # libinput, synaptics
+reload_options
 if [ ${switch_libinput_to_synaptics} -eq 1 ]; then
 pp; note "Install Synaptics and uninstall libinput."
 sudo apt -y install xserver-xorg-input-synaptics-hwe-18.04
@@ -914,67 +917,19 @@ sudo apt -y remove xserver-xorg-input-libinput
 sudo apt -y remove xserver-xorg-input-libinput-hwe-18.04
 fi
 # Wine
+reload_options
+if [ ${Wine} -eq 1 ]; then
 ## Wine (16.04 LTS)
 pp; instate wine
 ## Wine (18.04 LTS)
 pp; instate wine-development
+fi
 # VirtualBox
 reload_options
 if [ ${VirtualBox} -eq 1 ]; then
 pp; instate virtualbox
 fi
-# configure browsers
-reload_options
-if [ ${configure_browsers} -eq 1 ]; then
-pp; note "configure browsers"
-git clone https://github.com/wdbm/browsers_config.git
-cd browsers_config
-./setup.sh
-cd ..
-rm -rf browsers_config
-fi
-# default open applications
-pp; note "set default applications"
-echo_pause "In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
-# mlocate
-#pp; note "set up mlocate"
-#echo_pause "Prevent /media from being pruned by mlocate."
-#sudo nano /etc/updatedb.conf
-# users
-pp; note "Make user private."
-sudo chmod 750 /home/"${USER}"
-reload_options
-if [ ${make_public_user_account} -eq 1 ]; then
-pp; note "Create public user account, setting passcode to \"public\", full name to \"public\" and everything else to blank."
-sudo adduser public
-fi
-# desktop environments
-reload_options
-if [ ${LXDE} -eq 1 ]; then
-pp; note "Install the LXDE desktop environment. If wanted, switch to lightdm."
-sudo DEBIAN_FRONTEND=noninteractive apt -y install lxde-common
-fi
-instate lxpanel
-reload_options
-if [ ${MATE} -eq 1 ]; then
-pp; note "Install the MATE desktop environment. If wanted, to lightdm."
-sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-mate-desktop
-fi
-reload_options
-if [ ${Unity} -eq 1 ]; then
-pp; note "Install the Unity7 desktop environment. If wanted, to lightdm."
-sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-unity-desktop
-fi
-pp; note "Install GNOME Shell extensions capabilities and WinTile."
-sudo apt -y install gnome-tweaks gnome-shell-extensions chrome-gnome-shell
-firefox https://addons.mozilla.org/en-GB/firefox/addon/gnome-shell-integration https://extensions.gnome.org/extension/1723/wintile-windows-10-window-tiling-for-gnome # https://github.com/fmstrat/wintile
-
-################################################################################
-#                                                                              #
-# themes                                                                       #
-#                                                                              #
-################################################################################
-
+# themes
 # Numix icons
 pp; note "install themes"
 sudo apt-add-repository -y ppa:numix/ppa
@@ -1005,7 +960,66 @@ rm -rf arc-icon-theme
 #rm -rf arc-theme
 sudo apt install arc-theme
 # Compiz
-pp; instate compiz-plugins
+#pp; instate compiz-plugins
+# desktop environments
+reload_options
+if [ ${LXDE} -eq 1 ]; then
+pp; note "Install the LXDE desktop environment. If wanted, switch to lightdm."
+sudo DEBIAN_FRONTEND=noninteractive apt -y install lxde-common
+fi
+instate lxpanel
+reload_options
+if [ ${MATE} -eq 1 ]; then
+pp; note "Install the MATE desktop environment. If wanted, switch to lightdm."
+sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-mate-desktop
+fi
+reload_options
+if [ ${Unity} -eq 1 ]; then
+pp; note "Install the Unity7 desktop environment. If wanted, switch to lightdm."
+sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-unity-desktop
+fi
+
+################################################################################
+pp
+text="start final script interactions"
+pp; note "${text}"
+echo "${text}" | festival --tts &
+################################################################################
+
+# configure browsers
+reload_options
+if [ ${configure_browsers} -eq 1 ]; then
+pp; note "configure browsers"
+git clone https://github.com/wdbm/browsers_config.git
+cd browsers_config
+./setup.sh
+cd ..
+rm -rf browsers_config
+fi
+# mlocate
+#pp; note "set up mlocate"
+#echo_pause "Prevent /media from being pruned by mlocate."
+#sudo nano /etc/updatedb.conf
+# users
+pp; note "Make user private."
+sudo chmod 750 /home/"${USER}"
+reload_options
+if [ ${make_public_user_account} -eq 1 ]; then
+pp; note "Create public user account, setting passcode to \"public\", full name to \"public\" and everything else to blank."
+sudo adduser public
+fi
+pp; note "Install GNOME Shell extensions capabilities and WinTile."
+sudo apt -y install gnome-tweaks gnome-shell-extensions chrome-gnome-shell
+firefox https://addons.mozilla.org/en-GB/firefox/addon/gnome-shell-integration https://extensions.gnome.org/extension/1723/wintile-windows-10-window-tiling-for-gnome # https://github.com/fmstrat/wintile
+
+################################################################################
+#                                                                              #
+# themes                                                                       #
+#                                                                              #
+################################################################################
+
+reload_options
+if [ ${theme_Bash} -eq 1 ]; then
 # Bash Agnoster theme with Powerline
 pp; note "set up Bash Agnoster theme with Powerline"
 pp; note "install Agnoster"
@@ -1026,6 +1040,7 @@ else
     echo "${text}" >> ~/.bashrc
 fi
 echo_pause "In the terminal, select a profile, then select a font patched for Powerline (e.g. Monofur_for_Powerline.ttf)."
+fi
 # UCOM
 pp; note "install UCOM"
 wget https://raw.githubusercontent.com/wdbm/ucomsys/master/setup.sh
@@ -1098,8 +1113,10 @@ echo_pause "${text}"
 #    --command="gnome-terminal --window --full-screen" \
 #    --name="terminal_fullscreen"                      \
 #    --keys="<Control><Shift>x"
-reload_options
 
+# default open applications
+pp; note "set default applications"
+echo_pause "Set default applications as necessary. In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
 # Indicator-SysMonitor (a system tray system monitor notification indicator)
 pp; note "Indicator-SysMonitor"
 instate python3-psutil gir1.2-appindicator3-0.1
@@ -1124,6 +1141,10 @@ chmod 755 setup.sh
 ./setup.sh
 rm setup.sh
 fi
+pp; echo -e "Using the following instructions, enable terminal output on boot, after which there will be an update to GRUB."
+echo_pause "Do this by executing (in another terminal) 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
+sudo update-grub
+echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
 
 ################################################################################
 text="final script interactions complete"
@@ -1136,16 +1157,6 @@ sudo apt -y autoremove
 #echo_pause "A db map of non-volatile storage (hard drives) is to take place now for use by mlocate. Remove external drives as necessary."
 #pp; note "create db map"
 #sudo updatedb
-
-################################################################################
-pp; note "concluding remarks"
-################################################################################
-
-pp; echo -e "Using the following instructions, enable terminal output on boot, after which there will be an update to GRUB."
-echo_pause "Do this by executing (in another terminal) 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
-sudo update-grub
-echo_pause "Using a desktop environment tweak tool or similar, set the theme to Arc-dark and the icons to Arc, just 'cause they're cool."
-reload_options
 
 ################################################################################
 note "time: "$(date "+%A %d %B %H:%M:%S %Z %Y (%Y-%m-%dT%H%M%S)")""
