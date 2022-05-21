@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-18T1723Z"
+version="2022-05-21T1848Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -583,6 +583,8 @@ fi
 # drivers
 instate dkms
 # security
+# disable recently-used files lists
+gsettings set org.gnome.desktop.privacy remember-recent-files false
 pp; instate fail2ban
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 # directories
