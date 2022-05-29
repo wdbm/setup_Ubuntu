@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-21T1848Z"
+version="2022-05-22T1722Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -479,16 +479,28 @@ fi
 instate pulseaudio-utils
 echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
 # root privileges for programs
-echo
-echo -e "The file /etc/sudoers is about to be editable. When it is editable, customise the sudo environment reset timeout which is specified in minutes. For example, the line\nDefaults        env_reset\ncould be changed to\nDefaults        env_reset, timestamp_timeout=60"
-echo
-echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
+echo -e "The file /etc/sudoers is about to be editable. When it is editable,
+customise the sudo environment reset timeout which is specified in minutes. For
+example, the line
+
+Defaults        env_reset
+
+could be changed to
+
+Defaults        env_reset, timestamp_timeout=60
+
+After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the
+file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
+"
+echo_pause "Press a key to continue."
 sudo visudo
-echo -e "The file /etc/sudoers is about to be editable. When it is editable, set up root privileges for special scripts by editing the file /etc/sudoers.tmp (internally using the command sudo visudo). So, copy the following lines and then add them to the file /etc/sudoers.tmp that shall be opened next."
-#Defaults        timestamp_timeout=60
+echo -e "The file /etc/sudoers is about to be editable. When it is editable, set
+up root privileges for special scripts by editing the file /etc/sudoers.tmp
+(internally using the command sudo visudo). So, copy the following lines and
+then add them to the file /etc/sudoers.tmp that shall be opened next.
+"
 IFS= read -d '' text << "EOF"
 # Allow users of the group airvpn to run AirVPN as root.
-%airvpn ALL=(root) NOPASSWD:/usr/bin/airvpn
 %airvpn ALL=(root) NOPASSWD:/usr/bin/eddie-ui
 # Allow users of the group OpenVPN to run openvpn as root.
 %openvpn ALL=(root) NOPASSWD:/usr/sbin/openvpn
@@ -496,8 +508,11 @@ IFS= read -d '' text << "EOF"
 %veracrypt ALL=(root) NOPASSWD:/usr/bin/veracrypt
 EOF
 echo "${text}"
-echo
-echo_pause "After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter."
+echo "
+After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the
+file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
+"
+echo_pause "Press a key to continue."
 sudo visudo
 # OpenVPN
 pp; echo "create openvpn group"
@@ -679,6 +694,9 @@ sudo python get-pip.py
 sudo python3 get-pip.py
 rm get-pip.py
 sudo pip install pypandoc
+# Flatpak
+sudo apt -y install flatpak gnome-software-plugin-flatpak
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 # Geany
 pp; instate geany
 pp; note "configure Geany";
