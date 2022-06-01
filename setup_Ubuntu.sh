@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-22T1722Z"
+version="2022-05-31T0416Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -856,6 +856,7 @@ sudo pip install        \
     python_spin         \
     technicolor         \
     tmux_control        \
+    virtualenv          \
     william_blake_crypto
 sudo pip install s-tui --ignore-installed psutil
 reload_options
