@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-05-31T0416Z"
+version="2022-06-02T0248Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -76,11 +76,12 @@ GPU=0                             # install GPU utilities
 PopcornTime=0                     # install Popcorn Time
 music_applications=0              # install music applications
 configure_browsers=0              # configure browsers
-PPELX=0                           # PPELX Wi-Fi setup
+PPELX=0                           # PPELX Wi-Fi and CUPS setup
 switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04)
 remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
 make_public_user_account=0        # make a public user account
 theme_Bash=1                      # theme Bash
+Indicator_SysMonitor=1            # set up Indicator-SysMonitor
 LXDE=0                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
 Unity=0                           # install Unity7 desktop environment
@@ -438,14 +439,16 @@ sudo apt -y autoremove
 clear
 pp; note "set up Ubuntu"
 echo_pause "Press any key to start."
-################################################################################
 pp; note "set up operating system"
 note "time: "$(date "+%A %d %B %H:%M:%S %Z %Y (%Y-%m-%dT%H%M%S)")""
 echo -e "\nHello! I am a script that tries my best to set up Ubuntu (preferably 16.04 LTS, but I think I can make a good try with 18.04 LTS). Make sure that you are very simply running me in a Bash terminal using your normal user account (not root) and that you are not trying to redirect my output to a file or something (I already keep a log, don't worry). Also make sure that you are using a sturdy, reliable internet connection. So, if you are at CERN, make sure you are using a wired connection, not the Wi-Fi. There are three main parts to my running. First I do some initial script interactions with you where I advise you to click things and so on and basically do manual things that I don't yet know how to do automatically. I tell you when these initial script interactions are complete. Then I run lots of things automatically. Then I finish up by asking you to do a few last things manually again. Note that I require an internet connection at all times and that I prefer to be run all at once, but if something breaks I will do my best to pick things up again if you restart me without screwing anything up. Before continuing, just make sure that the options that you want are set correctly in my function called \"reload_options\". It you turn up the volume on your computer I will try to speak out occasionally telling you what I am doing. Don't worry -- I won't talk too much. Thanks for trusting me and I hope you like the things I will try to do. :)"
-text="starting initial script interactions\n"
-#pp; note "${text}"
-echo_pause "${text}"
+
 ################################################################################
+text="starting initial script interactions"
+pp; note "${text}"
+echo "${text}" | festival --tts &
+################################################################################
+
 # security
 pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other logging as desired."
 pp; instate macchanger
@@ -477,9 +480,10 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 fi
 # sound, display, power
 instate pulseaudio-utils
-echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
+pp; echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
 # root privileges for programs
-echo -e "The file /etc/sudoers is about to be editable. When it is editable,
+pp; note "set up sudoer permissions"
+pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable,
 customise the sudo environment reset timeout which is specified in minutes. For
 example, the line
 
@@ -487,14 +491,14 @@ Defaults        env_reset
 
 could be changed to
 
-Defaults        env_reset, timestamp_timeout=60
+Defaults        env_reset, timestamp_timeout=120
 
 After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the
 file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
 "
 echo_pause "Press a key to continue."
 sudo visudo
-echo -e "The file /etc/sudoers is about to be editable. When it is editable, set
+pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable, set
 up root privileges for special scripts by editing the file /etc/sudoers.tmp
 (internally using the command sudo visudo). So, copy the following lines and
 then add them to the file /etc/sudoers.tmp that shall be opened next.
@@ -515,26 +519,27 @@ file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
 echo_pause "Press a key to continue."
 sudo visudo
 # OpenVPN
-pp; echo "create openvpn group"
+pp; note "create openvpn group"
 sudo groupadd openvpn
 sudo gpasswd -a "${USER}" openvpn
 echo "add current user ("${USER}") to the group openvpn"
 # AirVPN
 reload_options
 if [ ${AirVPN} -eq 1 ]; then
-pp; echo "create airvpn group"
+pp; note "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
 sudo gpasswd -a "${USER}" airvpn
 # upcoming: apt-key deprecated:
 wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
-sudo add-apt-repository "deb http://eddie.website/repository/apt stable main"
+sudo add-apt-repository -y "deb http://eddie.website/repository/apt stable main"
 sudo apt -y install eddie-ui
-echo_pause "Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy, changing auth_admin to yes."
-sudo nano /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
+# Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy,
+# changing "auth_admin" to "yes".
+sudo sed -i 's/auth_admin/yes/g' /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 fi
 # VeraCrypt
-pp; echo "create veracrypt group"
+pp; note "create veracrypt group"
 sudo groupadd veracrypt
 echo "add current user ("${USER}") to the group VeraCrypt"
 sudo gpasswd -a "${USER}" veracrypt
@@ -551,16 +556,15 @@ pp; instate build-essential checkinstall git
 #sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 #sudo apt -y update
 #instate gcc-4.9
-pp; echo "install fonts etc."
+pp; note "install fonts etc."
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 instate ubuntu-restricted-extras
 # security
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
 # communications
-reload_options
 # AppImageLauncher
-pp; echo "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
+pp; note "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
 sudo add-apt-repository -y ppa:appimagelauncher-team/stable
 sudo apt -y update
 sudo apt -y install appimagelauncher
@@ -714,7 +718,7 @@ pp; instate calibre
 reload_options
 if [ ${LaTeX} -eq 1 ]; then
 pp; note "install LaTeX"
-instate pdflatex # upcoming: fix
+instate pdflatex # kept in script for backwards-compatibility (installed by following packages)
 instate texlive-full
 instate texlive-latex-extra
 instate texlive-fonts-recommended
@@ -885,7 +889,7 @@ pp; note "set up tmux"
 wget --content-disposition -O ~/.tmux.conf https://raw.githubusercontent.com/wdbm/tmux_config/master/.tmux.conf
 # PPELX Kelvin Building automated Wi-Fi login
 reload_options
-if [ ${PPELX} -eq 1 ]; then
+#if [ ${PPELX} -eq 1 ]; then
 # add Glasgow PPE CUPS server (no longer active)
 #pp; note "add the Glasgow PPE CUPS server"
 #sudo touch /etc/cups/client.conf
@@ -896,7 +900,7 @@ if [ ${PPELX} -eq 1 ]; then
 #sudo service cups restart
 #pp; note "install Glasgow PPE WiFi -- suck_lord_kelvin_cock"
 #sudo pip install slokc
-fi
+#fi
 # hibernation
 pp; note "set up hibernation";
 IFS= read -d '' text << "EOF"
@@ -1081,21 +1085,21 @@ pp; note "Set some keyboard shortcuts."
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
 echo
-note "Ctrl+Shift+d"
+pp; note "Ctrl+Shift+d"
 IFS= read -d '' text << "EOF"
 bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
 EOF
 echo_pause "${text}"
 
 # shortkey: xtrlock
-note "Ctrl+Shift+l"
+pp; note "Ctrl+Shift+l"
 echo_pause "xtrlock"
 
 # shortkey: volume up
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # pactl set-sink-volume @DEFAULT_SINK@ +5%
 echo
-note "volume up key"
+pp; note "volume up key"
 IFS= read -d '' text << "EOF"
 pactl set-sink-volume @DEFAULT_SINK@ +5%
 EOF
@@ -1104,7 +1108,7 @@ echo_pause "${text}"
 # shortkey: volume down
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # pactl set-sink-volume @DEFAULT_SINK@ -5%
-note "volume down key"
+pp; note "volume down key"
 IFS= read -d '' text << "EOF"
 pactl set-sink-volume @DEFAULT_SINK@ -5%
 EOF
@@ -1139,6 +1143,8 @@ echo_pause "${text}"
 pp; note "set default applications"
 echo_pause "Set default applications as necessary. In settings, under \"System\", select \"Details\" and then select \"Default Applications\". Select applications such as Tilix as the terminal."
 # Indicator-SysMonitor (a system tray system monitor notification indicator)
+reload_options
+if [ ${Indicator_SysMonitor} -eq 1 ]; then
 pp; note "Indicator-SysMonitor"
 instate python3-psutil gir1.2-appindicator3-0.1
 git clone https://github.com/wdbm/indicator-sysmonitor.git
@@ -1153,6 +1159,7 @@ EOF
 echo "Set Indicator-SysMonitor to run on startup (the executable is indicator-sysmonitor) and set the output format as appropriate. The following is an example:"
 echo
 echo_pause "${text}"
+fi
 # ROOT
 reload_options
 if [ ${ROOT} -eq 1 ]; then
@@ -1162,6 +1169,7 @@ chmod 755 setup.sh
 ./setup.sh
 rm setup.sh
 fi
+pp; note "set up GRUB"
 pp; echo -e "Using the following instructions, enable terminal output on boot, after which there will be an update to GRUB."
 echo_pause "Do this by executing (in another terminal) 'sudo nano /etc/default/grub' and then changing the line 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' to include \"text\" and remove  \"quiet\" and \"splash\"."
 sudo update-grub
