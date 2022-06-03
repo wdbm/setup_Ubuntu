@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-02T0248Z"
+version="2022-06-03T0402Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -623,6 +623,7 @@ pp; instate chromium-browser
 # grid
 pp; instate globus-gsi-cert-utils-progs
 # networking
+pp; instate net-tools # ifconfig
 pp; instate openssh-server
 # SSH client
 pp; note "add SSH configurations to keep connections alive"
