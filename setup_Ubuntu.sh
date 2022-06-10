@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-03T0402Z"
+version="2022-06-10T0146Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -237,27 +237,28 @@ for current_program in "${@}"; do
         if [[ "$(text_in_lower_case "${current_program}")" == "bitcoin" ]]; then
             sudo add-apt-repository -y ppa:bitcoin/bitcoin
             sudo apt update
-            sudo apt -y install bitcoin-qt
+            time sudo apt -y install bitcoin-qt
         elif [[ "$(text_in_lower_case "${current_program}")" == "calibre" ]]; then
             #sudo add-apt-repository -y ppa:n-muench/calibre
             #sudo apt update
-            sudo apt -y install calibre
+            time sudo apt -y install calibre
         elif [[ "$(text_in_lower_case "${current_program}")" == "cinnamon" ]]; then
             sudo add-apt-repository -y ppa:gwendal-lebihan-dev/cinnamon-stable
             sudo apt update
-            sudo apt -y install cinnamon
+            time sudo apt -y install cinnamon
         elif [[ "$(text_in_lower_case "${current_program}")" == "cool-retro-term" ]]; then
-            sudo apt -y install build-essential
-            sudo apt -y install qmlscene
-            sudo apt -y install qt5-qmake
-            sudo apt -y install qt5-default
-            sudo apt -y install qtdeclarative5-dev
-            sudo apt -y install qtdeclarative5-controls-plugin
-            sudo apt -y install qtdeclarative5-qtquick2-plugin
-            sudo apt -y install libqt5qml-graphicaleffects
-            sudo apt -y install qtdeclarative5-dialogs-plugin
-            sudo apt -y install qtdeclarative5-localstorage-plugin
-            sudo apt -y install qtdeclarative5-window-plugin
+            time sudo apt -y install              \
+                build-essential                   \
+                qmlscene                          \
+                qt5-qmake                         \
+                qt5-default                       \
+                qtdeclarative5-dev                \
+                qtdeclarative5-controls-plugin    \
+                qtdeclarative5-qtquick2-plugin    \
+                libqt5qml-graphicaleffects        \
+                qtdeclarative5-dialogs-plugin     \
+                qtdeclarative5-localstorage-plugin\
+                qtdeclarative5-window-plugin
             git clone --recursive https://github.com/Swordfish90/cool-retro-term.git
             cd cool-retro-term/
             qmake && make
@@ -265,27 +266,28 @@ for current_program in "${@}"; do
             cd ..
             rm -rf cool-retro-term/
         elif [[ "$(text_in_lower_case "${current_program}")" == "dropbox" ]]; then
-            sudo apt -y install python-gtk2
+            time sudo apt -y install python-gtk2
             wget https://linux.dropbox.com/packages/ubuntu/dropbox_2.10.0_amd64.deb
             sudo apt -y install ./dropbox_2.10.0_amd64.deb
             rm dropbox_2.10.0_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "gimp-plugin-registry" ]]; then
             sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
             sudo apt update
-            sudo apt -y install gimp-plugin-registry
+            time sudo apt -y install gimp-plugin-registry
         elif [[ "$(text_in_lower_case "${current_program}")" == "google-chrome" ]]; then
             sudo apt -y install libappindicator1
             wget https://dl.google.com/linux/direct/google-chrome<-stable_current_amd64.deb
-            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./google-chrome-stable_current_amd64.deb'
+            time sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./google-chrome-stable_current_amd64.deb'
             rm google-chrome-stable_current_amd64.deb
         #elif [[ "$(text_in_lower_case "${current_program}")" == "google-earth" ]]; then
-        #    sudo apt -y install libc6:i386 lsb-core
-        #    sudo apt -y install ./google-earth-stable_7.1.2.2041_amd64.deb
+        #    time sudo apt -y install libc6:i386 lsb-core
+        #    time sudo apt -y install ./google-earth-stable_7.1.2.2041_amd64.deb
         #    rm google-earth-stable_7.1.2.2041_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "jitsi" ]]; then
             wget https://github.com/jitsi/jitsi-meet-electron/releases/download/v2022.1.1/jitsi-meet-x86_64.AppImage
             chmod 755 jitsi-meet-x86_64.AppImage
             ./jitsi-meet-x86_64.AppImage
+            rm jitsi-meet-x86_64.AppImage
         elif [[ "$(text_in_lower_case "${current_program}")" == "mathics" ]]; then
             git clone https://github.com/poeschko/Mathics.git
             cd Mathics
@@ -295,7 +297,7 @@ for current_program in "${@}"; do
             cd ../
             sudo rm -rf Mathics
         elif [[ "$(text_in_lower_case "${current_program}")" == "neo" ]]; then
-            sudo apt -y install build-essential libncurses-dev
+            time sudo apt -y install build-essential libncurses-dev
             git clone https://github.com/st3w/neo.git
             cd neo
             ./autogen.sh
@@ -306,39 +308,38 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "nextcloud" ]]; then
             sudo add-apt-repository -y ppa:nextcloud-devs/client
             sudo apt update
-            sudo apt -y install nextcloud-client
+            time sudo apt -y install nextcloud-client
         elif [[ "$(text_in_lower_case "${current_program}")" == "nordvpn" ]]; then
             wget https://repo.nordvpn.com/deb/nordvpn/debian/pool/main/nordvpn-release_1.0.0_all.deb
             sudo apt -y install ./nordvpn-release_1.0.0_all.deb
             rm nordvpn-release_1.0.0_all.deb
             sudo apt update
-            sudo apt install nordvpn
+            time sudo apt -y install nordvpn
         elif [[ "$(text_in_lower_case "${current_program}")" == "nuclear" ]]; then
-            wget https://github.com/nukeop/nuclear/releases/download/v0.6.3/nuclear-fca030.deb
+            time wget https://github.com/nukeop/nuclear/releases/download/v0.6.3/nuclear-fca030.deb
             sudo apt -y install ./nuclear-fca030.deb
             rm nuclear-fca030.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "playonlinux" ]]; then
             wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
             sudo wget http://deb.playonlinux.com/playonlinux_precise.list -O /etc/apt/sources.list.d/playonlinux.list
             sudo apt update
-            sudo apt -y install playonlinux
+            time sudo apt -y install playonlinux
         elif [[ "$(text_in_lower_case "${current_program}")" == "riot-web" ]]; then
             source /etc/os-release
             sudo sh -c "echo 'deb https://riot.im/packages/debian/ "${UBUNTU_CODENAME}" main' > /etc/apt/sources.list.d/matrix-riot-im.list"
             curl -L https://riot.im/packages/debian/repo-key.asc | sudo apt-key add -
             sudo apt update
-            sudo apt install riot-web
+            time sudo apt install riot-web
         elif [[ "$(text_in_lower_case "${current_program}")" == "sage" ]]; then
             #sudo add-apt-repository -y ppa:aims/sagemath
             #sudo apt update
-            #sudo apt -y install sagemath-upstream-binary
-            sudo apt -y install build-essential m4 dpkg-dev
-            sudo apt -y install sagemath
+            #time sudo apt -y install sagemath-upstream-binary
+            time sudo apt -y install build-essential m4 dpkg-dev sagemath
         elif [[ "$(text_in_lower_case "${current_program}")" == "seamonkey" ]]; then
             echo -e "\ndeb http://downloads.sourceforge.net/project/ubuntuzilla/mozilla/apt all main" |sudo tee -a /etc/apt/sources.list > /dev/null
             sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com C1289A29
             sudo apt update
-            sudo apt -y install seamonkey-mozilla-build
+            time sudo apt -y install seamonkey-mozilla-build
         elif [[ "$(text_in_lower_case "${current_program}")" == "signal" ]]; then
             #source /etc/os-release
             #curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
@@ -353,22 +354,23 @@ for current_program in "${@}"; do
                 sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
             # update package database and install signal
             sudo apt update
-            sudo apt -y install signal-desktop
+            time sudo apt -y install signal-desktop
         elif [[ "$(text_in_lower_case "${current_program}")" == "simplescreenrecorder" ]]; then
             sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder
             sudo apt update
-            sudo apt -y install simplescreenrecorder
+            time sudo apt -y install simplescreenrecorder
         #elif [[ "$(text_in_lower_case "${current_program}")" == "skype" ]]; then
         #    sudo apt -y install libpulse0:i386
         #    sudo add-apt-repository -y "deb http://archive.canonical.com/ $(lsb_release -sc) partner"
         #    sudo apt update
         #    sudo apt -y install skype
         #elif [[ "$(text_in_lower_case "${current_program}")" == "skype-call-recorder" ]]; then
-        #    sudo apt -y install libqtgui4
-        #    sudo apt -y install libid3-tools:i386
-        #    sudo apt -y install libid3-3.8.3v5:i386
-        #    sudo apt -y install libid3-tools
-        #    sudo apt -y install libid3-3.8.3v5
+        #    time sudo apt -y install\
+        #        libqtgui4           \
+        #        libid3-tools:i386   \
+        #        libid3-3.8.3v5:i386 \
+        #        libid3-tools        \
+        #        libid3-3.8.3v5
         #    wget http://atdot.ch/scr/files/0.10/skype-call-recorder-ubuntu_0.10_amd64.deb
         #    sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./skype-call-recorder-ubuntu_0.10_amd64.deb'
         #    rm skype-call-recorder-ubuntu_0.10_amd64.deb
@@ -378,9 +380,9 @@ for current_program in "${@}"; do
             curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
             echo "deb https://apt.syncthing.net/ syncthing release" | sudo tee /etc/apt/sources.list.d/syncthing.list
             sudo apt update
-            sudo apt -y install syncthing
+            time sudo apt -y install syncthing
         elif [[ "$(text_in_lower_case "${current_program}")" == "teamviewer" ]]; then
-            wget http://www.teamviewer.com/download/teamviewer_linux.deb
+            time wget http://www.teamviewer.com/download/teamviewer_linux.deb
             sudo apt -y install gdebi
             sudo gdebi -n teamviewer_linux.deb
             rm teamviewer_linux.deb
@@ -404,14 +406,14 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "youtube-dlg" ]]; then
             sudo add-apt-repository -y ppa:nilarimogard/webupd8
             sudo apt update
-            sudo apt -y install youtube-dlg
+            time sudo apt -y install youtube-dlg
         else
             # If Apt is available, use it to install the program.
             if actuality_program apt; then
-                sudo apt -y install "${current_program}"
+                time sudo apt -y install "${current_program}"
             # If YUM is available, use it to install the program.
             elif actuality_program yum; then
-                sudo yum -y install "${current_program}"
+                time sudo yum -y install "${current_program}"
             # If neither Apt nor YUM is available, cease attempts at
             # installation.
             else
@@ -452,6 +454,30 @@ echo "${text}" | festival --tts &
 # security
 pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other logging as desired."
 pp; instate macchanger
+pp; instate unattended-upgrades
+sudo dpkg-reconfigure -pmedium unattended-upgrades
+pp; echo_pause "Disable GNOME Tracker by accessing search settings."
+#systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+#tracker3 reset -s -r
+# to re-enable:
+#systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+# Geany
+pp; instate geany
+pp; note "configure Geany";
+git clone https://github.com/wdbm/geany_config.git
+cd geany_config
+./setup.sh
+cd ..
+rm -rf geany_config
+## Firefox
+#sudo snap -y remove firefox
+#sudo add-apt-repository -y ppa:mozillateam/ppa
+#echo '
+#Package: *
+#Pin: release o=LP-PPA-mozillateam
+#Pin-Priority: 1001
+#' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+#sudo apt -y --allow-downgrades install firefox
 # terminal style
 pp; echo "set up terminal style"
 list_of_gsettings_schemas="$(gsettings list-relocatable-schemas | grep -i terminal)"
@@ -559,9 +585,6 @@ pp; instate build-essential checkinstall git
 pp; note "install fonts etc."
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 instate ubuntu-restricted-extras
-# security
-pp; instate unattended-upgrades
-sudo dpkg-reconfigure unattended-upgrades
 # communications
 # AppImageLauncher
 pp; note "install AppImageLauncher, followed by some AppImages for installation with AppImageLauncher"
@@ -659,6 +682,7 @@ pp; instate checkinstall
 pp; instate cmus
 pp; instate cython
 pp; instate faad
+pp; instate gnome-screenshot
 pp; instate lame
 pp; instate libsox-fmt-all
 pp; instate libtheora-dev
@@ -702,14 +726,6 @@ sudo pip install pypandoc
 # Flatpak
 sudo apt -y install flatpak gnome-software-plugin-flatpak
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-# Geany
-pp; instate geany
-pp; note "configure Geany";
-git clone https://github.com/wdbm/geany_config.git
-cd geany_config
-./setup.sh
-cd ..
-rm -rf geany_config
 # Xournal and Xournal++
 #pp; instate xournal
 sudo snap install xournalpp
@@ -771,6 +787,7 @@ fi
 # Popcorn Time
 reload_options
 if [ ${PopcornTime} -eq 1 ]; then
+sudo apt -y install libgconf-2-4 libcanberra-gtk-module
 wget --content-disposition -O ~/Popcorn_Time.tar.gz https://raw.githubusercontent.com/softrains/software/master/Popcorn_Time/Popcorn_Time.tar.gz
 tar -xf ~/Popcorn_Time.tar.gz --directory="${HOME}"
 rm Popcorn_Time.tar.gz
@@ -798,8 +815,6 @@ pp; instate qtpfsgui # kept in script for backwards-compatibility
 ## Luminance HDR (18.04 LTS)
 pp; instate luminance-hdr
 # sounds
-pp; note "remove Rhythmbox"
-sudo apt -y remove rhythmbox
 pp; instate sox
 pp; instate lame libsox-fmt-all
 pp; instate faad
@@ -842,6 +857,7 @@ pp; instate xcalib
 pp; instate xtrlock
 pp; instate xvkbd
 # Python
+pp
 sudo pip install        \
     six                 \
     bochica             \
@@ -851,6 +867,7 @@ sudo pip install        \
     media_editing       \
     numpy               \
     pandas              \
+    pebcaw              \
     pyprel              \
     python-dateutil     \
     r245                \
@@ -959,15 +976,13 @@ fi
 # Numix icons
 pp; note "install themes"
 sudo apt-add-repository -y ppa:numix/ppa
-instate numix-icon-theme
-instate numix-icon-theme-circle
+instate numix-icon-theme numix-icon-theme-circle
 # Arc icons
 instate build-essential\
         autoconf       \
         automake       \
         pkg-config     \
-instate libgtk-3.0
-instate libgtk-3-dev
+instate libgtk-3.0 libgtk-3-dev
 git clone https://github.com/horst3180/arc-icon-theme
 cd arc-icon-theme
 ./autogen.sh --prefix=/usr
@@ -984,7 +999,7 @@ rm -rf arc-icon-theme
 #sudo make install
 #cd ..
 #rm -rf arc-theme
-sudo apt install arc-theme
+instate arc-theme
 # Compiz
 #pp; instate compiz-plugins
 # desktop environments
@@ -1004,6 +1019,9 @@ if [ ${Unity} -eq 1 ]; then
 pp; note "Install the Unity7 desktop environment. If wanted, switch to lightdm."
 sudo DEBIAN_FRONTEND=noninteractive apt -y install ubuntu-unity-desktop
 fi
+# sounds
+pp; note "remove Rhythmbox"
+sudo apt -y remove rhythmbox
 
 ################################################################################
 pp
@@ -1035,7 +1053,11 @@ pp; note "Create public user account, setting passcode to \"public\", full name 
 sudo adduser public
 fi
 pp; note "Install GNOME Shell extensions capabilities and WinTile."
-sudo apt -y install gnome-tweaks gnome-shell-extensions chrome-gnome-shell
+sudo apt -y install              \
+    gnome-tweaks                 \
+    gnome-shell-extensions       \
+    chrome-gnome-shell           \
+    gnome-shell-extension-manager
 firefox https://addons.mozilla.org/en-GB/firefox/addon/gnome-shell-integration https://extensions.gnome.org/extension/1723/wintile-windows-10-window-tiling-for-gnome # https://github.com/fmstrat/wintile
 
 ################################################################################
