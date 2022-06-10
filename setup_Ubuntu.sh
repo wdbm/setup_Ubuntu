@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-10T0151Z"
+version="2022-06-10T0207Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1111,6 +1111,16 @@ echo
 pp; note "Ctrl+Shift+d"
 IFS= read -d '' text << "EOF"
 bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
+EOF
+echo_pause "${text}"
+
+# shortkey: copy datetime
+# The text to enter into the command file of the keyboard shortcut entry dialog is as follows:
+# bash -c "(date "+%Y-%m-%dT%H%MZ" --utc) | xclip -selection c"
+echo
+pp; note "Ctrl+Shift+t"
+IFS= read -d '' text << "EOF"
+bash -c "(date "+%Y-%m-%dT%H%MZ" --utc) | xclip -selection c"
 EOF
 echo_pause "${text}"
 
