@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-10T0146Z"
+version="2022-06-10T0151Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -443,7 +443,7 @@ pp; note "set up Ubuntu"
 echo_pause "Press any key to start."
 pp; note "set up operating system"
 note "time: "$(date "+%A %d %B %H:%M:%S %Z %Y (%Y-%m-%dT%H%M%S)")""
-echo -e "\nHello! I am a script that tries my best to set up Ubuntu (preferably 16.04 LTS, but I think I can make a good try with 18.04 LTS). Make sure that you are very simply running me in a Bash terminal using your normal user account (not root) and that you are not trying to redirect my output to a file or something (I already keep a log, don't worry). Also make sure that you are using a sturdy, reliable internet connection. So, if you are at CERN, make sure you are using a wired connection, not the Wi-Fi. There are three main parts to my running. First I do some initial script interactions with you where I advise you to click things and so on and basically do manual things that I don't yet know how to do automatically. I tell you when these initial script interactions are complete. Then I run lots of things automatically. Then I finish up by asking you to do a few last things manually again. Note that I require an internet connection at all times and that I prefer to be run all at once, but if something breaks I will do my best to pick things up again if you restart me without screwing anything up. Before continuing, just make sure that the options that you want are set correctly in my function called \"reload_options\". It you turn up the volume on your computer I will try to speak out occasionally telling you what I am doing. Don't worry -- I won't talk too much. Thanks for trusting me and I hope you like the things I will try to do. :)"
+echo -e "\nHello! I am a script that tries their best to set up Ubuntu. Make sure that you are very simply running me in a Bash terminal using your normal user account (not root) and that you are not trying to redirect my output to a file or something (I already keep a log which should hopefully suffice). Also make sure that you are using a sturdy, reliable internet connection. So, if you are at CERN, make sure you are using a wired connection, not the Wi-Fi. There are three main parts to my running. First I do some initial script interactions with you where I advise you to click things and so on and basically do manual things that I don't yet know how to do automatically. I tell you when these initial script interactions are complete. Then I run lots of things automatically. Then I finish up by asking you to do a few last things manually again. Note that I require an internet connection at all times and that I prefer to be run all at once, but if something breaks I will do my best to pick things up again if you restart me without screwing anything up. Before continuing, just make sure that the options that you want are set correctly in my function called \"reload_options\". It you turn up the volume on your computer I will try to speak out occasionally telling you what I am doing. Don't worry -- I won't talk too much. Thanks for trusting me and I hope you like the things I will try to do. :)"
 
 ################################################################################
 text="starting initial script interactions"
@@ -456,9 +456,9 @@ pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other l
 pp; instate macchanger
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure -pmedium unattended-upgrades
-pp; echo_pause "Disable GNOME Tracker by accessing search settings."
-#systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
-#tracker3 reset -s -r
+pp; echo "Disable GNOME Tracker."
+systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+tracker3 reset -s -r
 # to re-enable:
 #systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
 # Geany
