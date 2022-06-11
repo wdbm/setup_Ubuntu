@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-10T0207Z"
+version="2022-06-11T0357Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -461,6 +461,10 @@ systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service track
 tracker3 reset -s -r
 # to re-enable:
 #systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+# enable click-to-minimize
+gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+# to undo:
+#gsettings reset org.gnome.shell.extensions.dash-to-dock click-action
 # Geany
 pp; instate geany
 pp; note "configure Geany";
