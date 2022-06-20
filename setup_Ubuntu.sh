@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-11T0357Z"
+version="2022-06-20T1928Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -735,6 +735,8 @@ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub
 sudo snap install xournalpp
 # Calibre
 pp; instate calibre
+# RSS
+pp; sudo snap install fluent-reader --candidate
 # LaTeX
 reload_options
 if [ ${LaTeX} -eq 1 ]; then
