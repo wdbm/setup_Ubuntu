@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-20T1928Z"
+version="2022-06-22T0045Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -691,6 +691,7 @@ pp; instate lame
 pp; instate libsox-fmt-all
 pp; instate libtheora-dev
 pp; instate mediainfo
+pp; instate ne
 # FFmpeg
 #git clone https://github.com/wdbm/FFmpeg_config.git
 #cd FFmpeg_config
