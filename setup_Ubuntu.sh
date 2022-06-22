@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-22T0045Z"
+version="2022-06-22T0125Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -270,6 +270,10 @@ for current_program in "${@}"; do
             wget https://linux.dropbox.com/packages/ubuntu/dropbox_2.10.0_amd64.deb
             sudo apt -y install ./dropbox_2.10.0_amd64.deb
             rm dropbox_2.10.0_amd64.deb
+        elif [[ "$(text_in_lower_case "${current_program}")" == "edex-ui" ]]; then
+            wget https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-x86_64.AppImage
+            chmod 755 eDEX-UI-Linux-x86_64.AppImage
+            ./eDEX-UI-Linux-x86_64.AppImage
         elif [[ "$(text_in_lower_case "${current_program}")" == "gimp-plugin-registry" ]]; then
             sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
             sudo apt update
@@ -596,6 +600,7 @@ sudo add-apt-repository -y ppa:appimagelauncher-team/stable
 sudo apt -y update
 sudo apt -y install appimagelauncher
 pp; instate jitsi
+pp; instate edex-ui
 
 ################################################################################
 text="initial script interactions complete"
