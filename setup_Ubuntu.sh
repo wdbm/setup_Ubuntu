@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-06-22T0125Z"
+version="2022-07-04T0756Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -465,6 +465,12 @@ systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service track
 tracker3 reset -s -r
 # to re-enable:
 #systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+pp; echo "Disable Apport."
+sudo systemctl disable --now apport.service
+sudo systemctl mask apport.service
+# to re-enable:
+#sudo systemctl unmask apport.service
+#sudo systemctl enable apport.service
 # enable click-to-minimize
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 # to undo:
