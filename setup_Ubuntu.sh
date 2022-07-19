@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-07-04T0756Z"
+version="2022-07-19T0945Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -815,7 +815,8 @@ pp; instate gimp
 pp; instate gimp-plugin-registry
 pp; instate imagemagick
 pp; instate webp
-pp; instate hugin # upcoming: fix? or kept in script for backwards-compatibility
+pp; instate hugin # kept in script for backwards-compatibility
+pp; flatpak install -y flathub net.sourceforge.Hugin
 pp; instate inkscape
 #pp; note "install Instagram download program Instaloader"
 #sudo pip install instaloader
