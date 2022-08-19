@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-07-19T0945Z"
+version="2022-08-19T0759Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -1157,10 +1157,30 @@ pactl set-sink-volume @DEFAULT_SINK@ +5%
 EOF
 echo_pause "${text}"
 
+# shortkey: volume up
+# The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
+# pactl set-sink-volume @DEFAULT_SINK@ +5%
+echo
+pp; note "Ctrl+Shift+PgUp"
+IFS= read -d '' text << "EOF"
+pactl set-sink-volume @DEFAULT_SINK@ +5%
+EOF
+echo_pause "${text}"
+
 # shortkey: volume down
 # The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
 # pactl set-sink-volume @DEFAULT_SINK@ -5%
 pp; note "volume down key"
+IFS= read -d '' text << "EOF"
+pactl set-sink-volume @DEFAULT_SINK@ -5%
+EOF
+echo_pause "${text}"
+
+# shortkey: volume down
+# The text to enter into the command field of the keyboard shortcut entry dialog is as follows:
+# pactl set-sink-volume @DEFAULT_SINK@ +5%
+echo
+pp; note "Ctrl+Shift+PgDn"
 IFS= read -d '' text << "EOF"
 pactl set-sink-volume @DEFAULT_SINK@ -5%
 EOF
