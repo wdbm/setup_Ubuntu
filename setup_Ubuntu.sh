@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2022-08-19T0759Z"
+version="2023-01-12T2245Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -404,9 +404,12 @@ for current_program in "${@}"; do
             #wget http://dlc.sun.com.edgesuite.net/virtualbox/4.3.10/virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb
             #sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb'
             #rm virtualbox-4.3_4.3.10-93012~Ubuntu~raring_amd64.deb
-            wget https://download.virtualbox.org/virtualbox/6.0.8/virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
-            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb'
-            rm virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
+            #wget https://download.virtualbox.org/virtualbox/6.0.8/virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
+            #sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb'
+            #rm virtualbox-6.0_6.0.8-130520~Ubuntu~xenial_amd64.deb
+            wget https://download.virtualbox.org/virtualbox/7.0.4/virtualbox-7.0_7.0.4-154605~Ubuntu~jammy_amd64.deb
+            sudo su -c 'DEBIAN_FRONTEND=noninteractive apt -y install ./virtualbox-7.0_7.0.4-154605~Ubuntu~jammy_amd64.deb'
+            rm virtualbox-7.0_7.0.4-154605~Ubuntu~jammy_amd64.deb
         elif [[ "$(text_in_lower_case "${current_program}")" == "youtube-dlg" ]]; then
             sudo add-apt-repository -y ppa:nilarimogard/webupd8
             sudo apt update
