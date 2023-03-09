@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2023-01-12T2245Z"
+version="2023-03-09T1909Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -295,7 +295,7 @@ for current_program in "${@}"; do
         elif [[ "$(text_in_lower_case "${current_program}")" == "mathics" ]]; then
             git clone https://github.com/poeschko/Mathics.git
             cd Mathics
-            sudo pip3 install pint
+            sudo pip install pint
             sudo python3 setup.py install
             sudo python3 setup.py initialize
             cd ../
@@ -586,6 +586,7 @@ pp; note "create veracrypt group"
 sudo groupadd veracrypt
 echo "add current user ("${USER}") to the group VeraCrypt"
 sudo gpasswd -a "${USER}" veracrypt
+sudo apt -y install dbus-x11 libfuse2
 mkdir veracrypt
 cd veracrypt
 wget https://launchpadlibrarian.net/289850375/veracrypt-1.19-setup.tar.bz2
@@ -897,6 +898,7 @@ sudo pip install        \
     seaborn             \
     shijian             \
     slugifygui          \
+    tuifimanager        \
     python_spin         \
     technicolor         \
     tmux_control        \
