@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2023-03-09T1909Z"
+version="2023-03-18T0232Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -524,6 +524,8 @@ fi
 # sound, display, power
 instate pulseaudio-utils
 pp; echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
+sudo apt -y install acpi tlp
+systemctl enable tlp.service
 # root privileges for programs
 pp; note "set up sudoer permissions"
 pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable,
