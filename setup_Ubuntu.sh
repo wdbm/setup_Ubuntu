@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2023-03-18T0232Z"
+version="2023-09-04T0125Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -86,6 +86,7 @@ LXDE=0                            # install LXDE desktop environment
 MATE=1                            # install MATE desktop environment
 Unity=0                           # install Unity7 desktop environment
 Wine=1                            # install Wine
+VeraCrypt=1                       # install VeraCrypt
 }
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
@@ -436,7 +437,7 @@ done
 # install prerequisites
 echo "install prerequisites"
 sudo apt -y update
-instate festival sox
+instate bc festival sox python3-launchpadlib
 
 # Install updates and try to ensure that the installation environment is ok.
 sudo apt -f install
@@ -543,10 +544,11 @@ file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
 "
 echo_pause "Press a key to continue."
 sudo visudo
-pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable, set
-up root privileges for special scripts by editing the file /etc/sudoers.tmp
-(internally using the command sudo visudo). So, copy the following lines and
-then add them to the file /etc/sudoers.tmp that shall be opened next.
+pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable,
+set up root privileges for special scripts by editing the file /etc/sudoers.tmp
+(internally using the command sudo visudo). So, copy the following lines (or
+merely some of them as appropriate) and then add them to the file
+/etc/sudoers.tmp that shall be opened next.
 "
 IFS= read -d '' text << "EOF"
 # Allow users of the group airvpn to run AirVPN as root.
@@ -584,6 +586,8 @@ sudo apt -y install eddie-ui
 sudo sed -i 's/auth_admin/yes/g' /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 fi
 # VeraCrypt
+reload_options
+if [ ${VeraCrypt} -eq 1 ]; then
 pp; note "create veracrypt group"
 sudo groupadd veracrypt
 echo "add current user ("${USER}") to the group VeraCrypt"
@@ -596,6 +600,7 @@ tar -xvf veracrypt-1.19-setup.tar.bz2
 sudo ./veracrypt-1.19-setup-gui-x64
 cd ..
 rm -rf veracrypt
+fi
 # coding
 pp; instate build-essential checkinstall git
 #pp; note "install GCC 4.9";
@@ -663,6 +668,7 @@ pp; note "remove default home directories"
     rm ~/examples.desktop
 fi
 # web
+pp; instate tor torbrowser-launcher
 pp; instate chromium-browser
 # grid
 pp; instate globus-gsi-cert-utils-progs
@@ -751,6 +757,8 @@ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub
 # Xournal and Xournal++
 #pp; instate xournal
 sudo snap install xournalpp
+# Mini Text
+sudo snap install mini-text
 # Calibre
 pp; instate calibre
 # RSS
@@ -788,7 +796,8 @@ pp; instate ffmpeg
 # LightSpark Flash player
 pp; note "install yt-dlp"
 sudo pip install yt-dlp
-#pp; instate youtube-dlg
+pp; note "install Parabolic"
+sudo snap install tube-converter
 pp; instate simplescreenrecorder # upcoming: "E: The repository 'https://ppa.launchpadcontent.net/maarten-baert/simplescreenrecorder/ubuntu jammy Release' does not have a Release file."
 pp; instate cheese
 pp; instate fswebcam
@@ -817,12 +826,13 @@ tar -xf ~/Popcorn_Time.tar.gz --directory="${HOME}"
 rm Popcorn_Time.tar.gz
 fi
 # images
+sudo snap install ascii-draw
 pp; instate gimp
 pp; instate gimp-plugin-registry
 pp; instate imagemagick
 pp; instate webp
 pp; instate hugin # kept in script for backwards-compatibility
-pp; flatpak install -y flathub net.sourceforge.Hugin
+pp; note "install Hugin"; flatpak install -y flathub net.sourceforge.Hugin
 pp; instate inkscape
 #pp; note "install Instagram download program Instaloader"
 #sudo pip install instaloader
