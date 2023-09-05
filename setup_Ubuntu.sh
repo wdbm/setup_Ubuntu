@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2023-09-04T0125Z"
+version="2023-09-05T1403Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -465,10 +465,10 @@ pp; instate macchanger
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure -pmedium unattended-upgrades
 pp; echo "Disable GNOME Tracker."
-systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+sudo systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
 tracker3 reset -s -r
 # to re-enable:
-#systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+#sudo systemctl --user unmask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
 pp; echo "Disable Apport."
 sudo systemctl disable --now apport.service
 sudo systemctl mask apport.service
@@ -526,30 +526,15 @@ fi
 instate pulseaudio-utils
 pp; echo_pause "Set sound settings as required (allow loud volume etc.), set power settings as necessary and set display settings as necessary, such as preventing dimming."
 sudo apt -y install acpi tlp
-systemctl enable tlp.service
-# root privileges for programs
-pp; note "set up sudoer permissions"
-pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable,
-customise the sudo environment reset timeout which is specified in minutes. For
-example, the line
-
-Defaults        env_reset
-
-could be changed to
-
-Defaults        env_reset, timestamp_timeout=120
-
-After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the
-file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
-"
-echo_pause "Press a key to continue."
-sudo visudo
-pp; echo -e "The file /etc/sudoers is about to be editable. When it is editable,
-set up root privileges for special scripts by editing the file /etc/sudoers.tmp
-(internally using the command sudo visudo). So, copy the following lines (or
-merely some of them as appropriate) and then add them to the file
-/etc/sudoers.tmp that shall be opened next.
-"
+sudo systemctl enable tlp.service
+# sudo timeout and root privileges for programs
+pp; note "set up sudoer sudo environment reset timeout and sudoer permissions"
+if sudo grep -q "timestamp_timeout" /etc/sudoers; then
+    echo "The string 'timestamp_timeout' was found in /etc/sudoers, so the file is not to be modified."
+else
+    echo "The string 'timestamp_timeout' was not found in /etc/sudoers, so the file is be modified to include timestamp_timeout=120."
+    sudo sed -i 's/Defaults\s\+env_reset/Defaults        env_reset, timestamp_timeout=120/' /etc/sudoers
+fi
 IFS= read -d '' text << "EOF"
 # Allow users of the group airvpn to run AirVPN as root.
 %airvpn ALL=(root) NOPASSWD:/usr/bin/eddie-ui
@@ -558,13 +543,13 @@ IFS= read -d '' text << "EOF"
 # Allow users of the group veracrypt to run VeraCrypt as root.
 %veracrypt ALL=(root) NOPASSWD:/usr/bin/veracrypt
 EOF
-echo "${text}"
-echo "
-After editing, press Ctrl x to exit. Press \"y\" to save changes. Confirm the
-file to which changes are to be saved, /etc/sudoers.tmp, by pressing Enter.
-"
-echo_pause "Press a key to continue."
-sudo visudo
+if sudo grep -q "veracrypt" /etc/sudoers; then
+    echo "The string 'veracrypt' was found in /etc/sudoers, so the file is not to be modified."
+else
+    echo "The string 'veracrypt' was not found in /etc/sudoers, so the file is be modified to include the following text:"
+    echo "${text}"
+    echo "${text}" | sudo tee -a /etc/sudoers
+fi
 # OpenVPN
 pp; note "create openvpn group"
 sudo groupadd openvpn
