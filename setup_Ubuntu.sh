@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2023-09-05T1403Z"
+version="2024-06-03T1607Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -77,7 +77,7 @@ PopcornTime=0                     # install Popcorn Time
 music_applications=0              # install music applications
 configure_browsers=0              # configure browsers
 PPELX=0                           # PPELX Wi-Fi and CUPS setup
-switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04)
+switch_libinput_to_synaptics=0    # switch libinput to Synaptics (likely recommended for Ubuntu 20.04 and Ubuntu 22.04)
 remove_default_home_directories=0 # remove Documents, Music, Pictures, Public, Templates, Videos
 make_public_user_account=0        # make a public user account
 theme_Bash=1                      # theme Bash
@@ -464,7 +464,10 @@ pp; echo "Disable Zeitgeist (using Activity Log Manager for example) and other l
 pp; instate macchanger
 pp; instate unattended-upgrades
 sudo dpkg-reconfigure -pmedium unattended-upgrades
-pp; echo "Disable GNOME Tracker."
+pp; echo "Disable GNOME Tracker." # see also Activity Log Manager
+# GNOME 46 (reference: https://discourse.gnome.org/t/can-tracker-extract-be-disabled-in-gnome-46/20782)
+rm /usr/share/tracker3-miners/extract-rules/*
+# up to GNOME 46:
 sudo systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
 tracker3 reset -s -r
 # to re-enable:
@@ -978,7 +981,7 @@ pp; note "Install Synaptics and uninstall libinput."
 sudo apt -y install xserver-xorg-input-synaptics-hwe-18.04
 sudo apt -y install xserver-xorg-input-evdev-hwe-18.04
 sudo apt -y remove xserver-xorg-input-libinput
-sudo apt -y remove xserver-xorg-input-libinput-hwe-18.04
+#sudo apt -y remove xserver-xorg-input-libinput-hwe-18.04
 fi
 # Wine
 reload_options
