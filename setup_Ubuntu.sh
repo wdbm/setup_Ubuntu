@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2024-06-03T1607Z"
+version="2024-06-09T2237Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -466,7 +466,7 @@ pp; instate unattended-upgrades
 sudo dpkg-reconfigure -pmedium unattended-upgrades
 pp; echo "Disable GNOME Tracker." # see also Activity Log Manager
 # GNOME 46 (reference: https://discourse.gnome.org/t/can-tracker-extract-be-disabled-in-gnome-46/20782)
-rm /usr/share/tracker3-miners/extract-rules/*
+sudo rm /usr/share/tracker3-miners/extract-rules/*
 # up to GNOME 46:
 sudo systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-miner-rss-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
 tracker3 reset -s -r
