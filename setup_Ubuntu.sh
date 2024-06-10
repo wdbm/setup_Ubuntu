@@ -44,7 +44,7 @@
 #                                                                              #
 ################################################################################
 
-version="2024-06-09T2237Z"
+version="2024-06-09T2344Z"
 
 #:START:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -437,7 +437,7 @@ done
 # install prerequisites
 echo "install prerequisites"
 sudo apt -y update
-instate bc festival sox python3-launchpadlib
+instate bc festival sed sox python3-launchpadlib
 
 # Install updates and try to ensure that the installation environment is ok.
 sudo apt -f install
