@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2024-11-12T0130Z"
+version="2024-12-04T2222Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -174,7 +174,7 @@ instate(){
             if [[ "$(text_in_lower_case "${current_program}")" == "edex-ui" ]]; then
                 wget https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-x86_64.AppImage
                 chmod 755 eDEX-UI-Linux-x86_64.AppImage
-                ./eDEX-UI-Linux-x86_64.AppImage
+                ./eDEX-UI-Linux-x86_64.AppImage #--no-sandbox
             elif [[ "$(text_in_lower_case "${current_program}")" == "gimp-plugin-registry" ]]; then
                 sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp
                 sudo apt update
@@ -289,7 +289,6 @@ echo "${text}" | festival --tts &
 
 pp; note "set up Ubuntu"
 echo_pause "Press any key to start."
-pp; note "set up operating system"
 echo -e "\nPlease run this script as a non-root user and please ensure that \
 the output of this script is not being redirected to a file as this is done \
 by the script. In this script, there are initial interactions to advise on \
@@ -457,7 +456,6 @@ pp; note "set up Bash Agnoster theme with Powerline"
 pp; note "install Agnoster"
 mkdir -p ${HOME}/.bash/themes/agnoster-bash
 git clone https://github.com/speedenator/agnoster-bash.git ${HOME}/.bash/themes/agnoster-bash
-pp; note "add Agnoster configuration to .bashrc"
 if grep -Fxq "agnoster" ~/.bashrc; then
     echo "configuration found, not overwriting"
     echo "${text}"
@@ -474,8 +472,10 @@ instate ttf-mscorefonts-installer
 
 pp; note "install ARandR"
 instate arandr
-pp; note "install eDEX-UI"
-instate edex-ui
+#pp; note "install eDEX-UI"
+#instate edex-ui
+pp; note "install Graphical Disk Map"
+instate gdmap
 pp; note "install genact"
 sudo snap install genact
 pp; note "install Hollywood"
@@ -516,7 +516,7 @@ pp; instate unity-tweak-tool
 
 # keyboard shortcuts
 
-pp; note "Set some keyboard shortcuts."
+pp; note "set some keyboard shortcuts"
 
 create_shortcut() {
     local shortcut_name="${1}"
