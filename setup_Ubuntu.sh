@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2024-12-04T2222Z"
+version="2025-01-05T1400Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -429,6 +429,9 @@ gsettings set org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profi
 reload_options
 if [ ${theme_Bash} -eq 1 ]; then
 
+pp; note "set up Bash Agnoster theme with Powerline"
+pp; note "install Agnoster"
+
 # install Powerline fonts
 
 pp; note "install fonts patched for Powerline (note: https://superuser.com/a/1336614/705613)"
@@ -451,9 +454,6 @@ if [[ -f ${THEME} ]]; then
     source ${THEME}
 fi
 EOF
-
-pp; note "set up Bash Agnoster theme with Powerline"
-pp; note "install Agnoster"
 mkdir -p ${HOME}/.bash/themes/agnoster-bash
 git clone https://github.com/speedenator/agnoster-bash.git ${HOME}/.bash/themes/agnoster-bash
 if grep -Fxq "agnoster" ~/.bashrc; then
@@ -677,6 +677,8 @@ pp; note "install Signal"
 instate signal
 
 # torrenting
+pp; note install "Transmission"
+sudo snap install transmission
 pp; note "install transmission-cli"
 instate transmission-cli
 
