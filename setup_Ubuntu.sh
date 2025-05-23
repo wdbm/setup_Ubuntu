@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2025-01-05T1400Z"
+version="2025-05-23T0800Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -632,6 +632,7 @@ sudo snap install xournalpp
 
 # networking and communications ---------------------------------------------- #
 
+# upcoming: separate:
 IFS= read -d '' text << "EOF"
 # Allow users of the group airvpn to run AirVPN as root.
 %airvpn ALL=(root) NOPASSWD:/usr/bin/eddie-ui
@@ -662,11 +663,14 @@ pp; note "create airvpn group"
 sudo groupadd airvpn
 echo "add current user ("${USER}") to the group airvpn"
 sudo gpasswd -a "${USER}" airvpn
-# upcoming: apt-key deprecated:
-wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
-sudo add-apt-repository -y "deb http://eddie.website/repository/apt stable main"
+# apt-key deprecated:
+#wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
+#sudo add-apt-repository -y "deb http://eddie.website/repository/apt stable main"
+echo "deb [signed-by=/usr/share/keyrings/eddie.website-keyring.asc] http://eddie.website/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/eddie.website.list
+sudo apt update
 pp; note "install Eddie"
 instate eddie-ui
+instate eddie-cli
 # Edit the file /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy,
 # changing "auth_admin" to "yes".
 sudo sed -i 's/auth_admin/yes/g' /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
