@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2025-05-23T0800Z"
+version="2025-12-17T2129Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -675,6 +675,9 @@ instate eddie-cli
 # changing "auth_admin" to "yes".
 sudo sed -i 's/auth_admin/yes/g' /usr/share/polkit-1/actions/org.airvpn.eddie.ui.elevated.policy
 fi
+
+# proxy server
+instate sshuttle
 
 # Signal
 pp; note "install Signal"
