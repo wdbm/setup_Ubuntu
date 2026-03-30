@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2025-12-17T2129Z"
+version="2026-03-30T1812Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -344,6 +344,20 @@ echo
 echo_pause "${text}"
 fi
 
+# ydotool
+pp; note "install and set up ydotool"
+pp; instate ydotool
+# grant user access to `/dev/uinput`
+sudo groupadd --force input
+sudo usermod -aG input "${USER}"
+# create a udev rule
+printf '%s\n' 'KERNEL=="uinput", MODE="0660", GROUP="input"' | \
+    sudo tee /etc/udev/rules.d/80-uinput.rules >/dev/null
+# reload the rule and trigger it
+sudo modprobe uinput
+sudo udevadm control --reload-rules
+sudo udevadm trigger /dev/uinput
+
 ################################################################################
 text="initial script interactions complete"
 pp; note "${text}"
@@ -571,10 +585,22 @@ create_shortcut \
     "pactl set-sink-volume @DEFAULT_SINK@ -5%"
 
 # shortkey: type datetime
-# bash -c "sleep 0.1; xvkbd -text $(date "+%Y-%m-%dT%H%MZ" --utc) 2>/dev/null"
-create_shortcut "type_datetime" \
-    "<Control><Shift>d" \
-    "bash -c 'sleep 0.1; xvkbd -text \"\$(date \"+%Y-%m-%dT%H%MZ\" --utc)\" 2>/dev/null'"
+# X11:
+# bash -c 'sleep 0.1; xvkbd -text "$(date "+%Y-%m-%dT%H%MZ" --utc)" 2>/dev/null'
+# Wayland:
+# bash -c 'sleep 0.2; ydotool type "$(date "+%Y-%m-%dT%H%MZ" --utc)"'
+case "${XDG_SESSION_TYPE}" in
+    wayland)
+        create_shortcut "type_datetime" \
+            "<Control><Shift>d" \
+            "bash -c 'sleep 0.2; ydotool type \"\$(date \"+%Y-%m-%dT%H%MZ\" --utc)\"'"
+        ;;
+    x11)
+        create_shortcut "type_datetime" \
+            "<Control><Shift>d" \
+            "bash -c 'sleep 0.1; xvkbd -text \"\$(date \"+%Y-%m-%dT%H%MZ\" --utc)\" 2>/dev/null'"
+        ;;
+esac
 
 ## shortkey: copy datetime
 ## bash -c "(date "+%Y-%m-%dT%H%MZ" --utc) | xclip -selection c"
