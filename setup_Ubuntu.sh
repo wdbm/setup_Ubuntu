@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-03-30T1812Z"
+version="2026-04-17T0253Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -257,6 +257,8 @@ instate python3-pip
 sudo python3 -m pip config set global.break-system-packages true
 pp; note "install virtualenv"
 sudo pip3 install virtualenv
+pp; note "install docopt"
+sudo pip3 install docopt
 pp; note "install pypandoc"
 sudo pip3 install pypandoc
 
@@ -267,6 +269,10 @@ sudo pip3 install pypandoc
 #sudo add-apt-repository -y ppa:appimagelauncher-team/stable
 #sudo apt -y update
 #instate appimagelauncher
+
+# npm
+pp; note "install npm"
+instate npm
 
 # Flatpak
 pp; note "install Flatpak"
@@ -313,6 +319,7 @@ cd veracrypt
 wget https://launchpadlibrarian.net/289850375/veracrypt-1.19-setup.tar.bz2
 tar -xvf veracrypt-1.19-setup.tar.bz2
 sudo ./veracrypt-1.19-setup-console-x64
+#sudo ./veracrypt-1.19-setup-gui-x64
 cd ..
 rm -rf veracrypt
 fi
@@ -692,6 +699,8 @@ sudo gpasswd -a "${USER}" airvpn
 # apt-key deprecated:
 #wget -qO - https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo apt-key add -
 #sudo add-apt-repository -y "deb http://eddie.website/repository/apt stable main"
+#echo "deb [signed-by=/usr/share/keyrings/eddie.website-keyring.asc] http://eddie.website/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/eddie.website.list
+curl -fsSL https://eddie.website/repository/keys/eddie_maintainer_gpg.key | sudo tee /usr/share/keyrings/eddie.website-keyring.asc > /dev/null
 echo "deb [signed-by=/usr/share/keyrings/eddie.website-keyring.asc] http://eddie.website/repository/apt stable main" | sudo tee /etc/apt/sources.list.d/eddie.website.list
 sudo apt update
 pp; note "install Eddie"
@@ -707,7 +716,12 @@ instate sshuttle
 
 # Signal
 pp; note "install Signal"
-instate signal
+instate signal-desktop
+
+# Mattermost
+pp; note "install Mattermost"
+curl -fsS -o- https://deb.packages.mattermost.com/setup-repo.sh | sudo bash
+sudo apt install mattermost-desktop
 
 # torrenting
 pp; note install "Transmission"
