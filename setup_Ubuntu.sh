@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-04-22T2129Z"
+version="2026-04-22T2216Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -352,6 +352,10 @@ is an example:"
 echo
 echo_pause "${text}"
 fi
+
+# video
+pp; note "install codecs"
+instate libdvdnav4 libdvd-pkg gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libdvd-pkg
 
 # ydotool
 pp; note "install and set up ydotool"
