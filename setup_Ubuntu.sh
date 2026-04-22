@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-04-17T0253Z"
+version="2026-04-22T1840Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -534,6 +534,10 @@ pp; instate gnome-shell-extensions
 pp; instate chrome-gnome-shell
 pp; instate gnome-shell-extension-manager
 pp; instate unity-tweak-tool
+pp; instate gnome-extensions-app
+pp; instate gnome-shell-extension-prefs
+pp; note "enable GNOME click-to-minimize"
+gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 
 # keyboard shortcuts
 
@@ -618,6 +622,14 @@ esac
 
 # editors, coding, typesetting ----------------------------------------------- #
 
+pp; note "install gedit"
+instate gedit
+pp; note "install LibreOffice"
+instate libreoffice
+pp; note "install Kate"
+instate kate
+pp; note "install Kompare"
+instate kompare
 # Calibre
 pp; note "install Calibre"
 instate calibre
@@ -656,12 +668,24 @@ instate pdftk
 sudo snap install pdftk
 pp; note "install pdftotext"
 instate pdftotext
+# Typora
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://downloads.typora.io/typora.gpg | sudo tee /etc/apt/keyrings/typora.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/typora.gpg] https://downloads.typora.io/linux ./" | sudo tee /etc/apt/sources.list.d/typora.list
+sudo apt update
+instate typora
+
 # Xournal
 #pp; note "install Xournal"
 #instate xournal
 # Xournal++
 pp; note "install Xournal++"
 sudo snap install xournalpp
+
+# Python packages
+pp; note "install some Python packages"
+sudo pip3 install dataset
+sudo pip3 install ttkthemes
 
 # networking and communications ---------------------------------------------- #
 
@@ -932,6 +956,8 @@ pp; note "install Hugin"
 flatpak install -y flathub net.sourceforge.Hugin
 pp; note "install ImageMagick"
 instate imagemagick
+pp; note "install img2pdf"
+instate img2pdf
 pp; note "install Inkspace"
 instate inkscape
 pp; note "install gallery-dl"
@@ -947,6 +973,8 @@ pp; note "install mediainfo"
 instate mediainfo
 pp; note "install WEBP"
 instate webp
+sudo add-apt-repository -y ppa:helkaluin/webp-pixbuf-loader
+instate webp-pixbuf-loader
 
 # Gcolor2
 pp; note "install Gcolor2"
