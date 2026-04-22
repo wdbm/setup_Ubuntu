@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-04-22T1840Z"
+version="2026-04-22T1854Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -57,8 +57,10 @@ reload_options(){
     ROOT=0
     Sage=0
     Mathics=0
+    Mattermost=0
     VirtualBox=0
     GPU=0 # install GPU utilities
+    Telegram=0
     theme_Bash=1
     Indicator_SysMonitor=1
     Wine=1
@@ -738,14 +740,24 @@ fi
 # proxy server
 instate sshuttle
 
+# Mattermost
+reload_options
+if [ ${Mattermost} -eq 1 ]; then
+    pp; note "install Mattermost"
+    curl -fsS -o- https://deb.packages.mattermost.com/setup-repo.sh | sudo bash
+    instate mattermost-desktop
+fi
+
 # Signal
 pp; note "install Signal"
 instate signal-desktop
 
-# Mattermost
-pp; note "install Mattermost"
-curl -fsS -o- https://deb.packages.mattermost.com/setup-repo.sh | sudo bash
-sudo apt install mattermost-desktop
+# Telegram
+reload_options
+if [ ${Telegram} -eq 1 ]; then
+    pp; note "install Telegram"
+    sudo snap install telegram-desktop
+fi
 
 # torrenting
 pp; note install "Transmission"
