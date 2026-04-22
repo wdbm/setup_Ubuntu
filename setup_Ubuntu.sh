@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-04-22T1854Z"
+version="2026-04-22T2129Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -540,6 +540,8 @@ pp; instate gnome-extensions-app
 pp; instate gnome-shell-extension-prefs
 pp; note "enable GNOME click-to-minimize"
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+pp; note "turn off GNOME screenshot camera sound"
+sudo mv /usr/share/sounds/freedesktop/stereo/camera-shutter.oga /usr/share/sounds/freedesktop/stereo/damn-camera-shutter.oga.bak
 
 # keyboard shortcuts
 
