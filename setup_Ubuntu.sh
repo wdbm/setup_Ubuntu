@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-04-22T2216Z"
+version="2026-04-24T2136Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -542,6 +542,11 @@ pp; instate gnome-shell-extension-manager
 pp; instate unity-tweak-tool
 pp; instate gnome-extensions-app
 pp; instate gnome-shell-extension-prefs
+gnome-extensions disable tiling-assistant@ubuntu.com
+gnome-extensions-cli install 5829
+gnome-extensions-cli install 3733
+gnome-extensions-cli install 3843
+gnome-extensions-cli install 1723
 pp; note "enable GNOME click-to-minimize"
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 pp; note "turn off GNOME screenshot camera sound"
