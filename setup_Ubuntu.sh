@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-05-04T1944Z"
+version="2026-05-06T1707Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -1024,6 +1024,8 @@ pp; note "install mpv"
 instate mpv
 pp; note "install OpenShot"
 instate openshot
+pp; note "install Kooha"
+sudo snap install kooha
 pp; note "install SimpleScreenRecorder"
 instate simplescreenrecorder
 pp; note "remove Totem"
