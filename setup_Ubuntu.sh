@@ -41,7 +41,7 @@
 #                                                                              #
 ################################################################################
 
-version="2026-05-06T1707Z"
+version="2026-05-19T2002Z"
 
 #¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´¯`·.¸¸.·´><(((º>
 
@@ -806,6 +806,9 @@ if grep -Fxq "ClientAliveInterval" /etc/ssh/sshd_config; then
 else
     echo "${text}" | sudo tee -a /etc/ssh/sshd_config
 fi
+# SSH Filesystem
+pp; note "install SSH Filesystem"
+pp; instate sshfs
 
 # VNC
 pp; note "install VPN infrastructure"
